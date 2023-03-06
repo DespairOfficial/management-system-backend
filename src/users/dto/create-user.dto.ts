@@ -12,10 +12,10 @@ export class CreateUserDto {
 
     @ApiProperty({
         example: 'user1',
-        description: 'Unique nickname of a user',
+        description: 'Name of a user',
     })
     @IsString({ message: 'Must be string' })
-    readonly nickname: string;
+    readonly name: string;
 
     @ApiProperty({
         example: 'asdf_1s!@41$#afafg9',

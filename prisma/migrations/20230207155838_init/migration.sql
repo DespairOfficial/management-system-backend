@@ -1,11 +1,11 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" UUID NOT NULL,
+    "uid" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "User_pkey" PRIMARY KEY ("uid")
 );
 
 -- CreateIndex

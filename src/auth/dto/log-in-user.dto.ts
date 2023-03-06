@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsEmail, IsString, Length } from '@nestjs/class-validator';
 
-export class SignInUserDto {
+export class LogInUserDto extends PartialType(CreateUserDto) {
     @ApiProperty({
         example: 'user@mail.com',
         description: 'Email of user, unique ',

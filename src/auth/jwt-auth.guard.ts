@@ -1,10 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { accessTokenOptions } from 'src/config/jwtOptions';
 import { NOT_AUTHORIZED, NOT_AUTHORIZED_OR_BAD_TOKEN } from 'src/constants';
-import { User } from 'src/interfaces/User.interface';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -19,8 +19,10 @@ export class JwtAuthGuard implements CanActivate {
                 throw new UnauthorizedException({ message: NOT_AUTHORIZED });
             }
             const user: User = this.jwtService.verify(token);
-
             req.user = user;
+	
+			const refresh = req.cookies
+			console.log(refresh)
             return true;
         } catch (error) {
             console.log(error);

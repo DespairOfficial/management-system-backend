@@ -1,4 +1,4 @@
-import { User } from 'src/interfaces/User.interface';
+import { User } from '@prisma/client';
 
 declare global {
     namespace Express {

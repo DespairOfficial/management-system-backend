@@ -1,4 +1,4 @@
-const accTokenExp = 30 * 60;
+const accTokenExp =  24 * 60 * 60;
 const refTokenExp = 3 * 24 * 60 * 60;
 export const accessTokenOptions = {
     expiresIn: accTokenExp,
