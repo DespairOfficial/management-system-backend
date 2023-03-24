@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id               Int              @id @default(autoincrement())
+    email            String?          @unique
+    firstName        String
+    lastName         String
+    patronymic       String?
+    gender           Boolean          @default(true)
+    isVerified       Boolean          @default(false)
+    isPublicProfile  Boolean          @default(false)
+    photo            String?
+    birthDate        DateTime?
+    verificationCode String?
+    phone            String?
+    address          String?
+    city             String?
+    district         String?
+    region           String?
+    session          Session[]
+    password         Password?
+    myTeams          Team[]
+    teams            UserTeams[]
+    myProjects         Project[]          @relation(name: "Creator of a project")
+    projects           UserProjects[]
+    requestsToTeams  RequestToTeam[]
+    requestsToProjects RequestToProject[]
+}
+
+model Password {
+    userId   Int    @unique
+    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    password String
+}
+
+model Session {
+    id           Int      @id @default(autoincrement())
+    userId       Int
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    refreshToken String   @unique
+    fingerprint  String   @unique
+    ip           String
+    userAgent    String
+    expiresAt    DateTime
+}
+
+
+model Project {
+    id                       Int              @id @default(autoincrement())
+    userId                   Int
+    creator                  User             @relation(name: "Creator of a project", fields: [userId], references: [id])
+    name                     String
+    numberOfParticipants     Int
+    description              String
+    startsAt                 DateTime
+    participants             UserProjects[]
+    requestsToProject         RequestToProject[]
+}
+
+
+model Team {
+    id            Int             @id @default(autoincrement())
+    userId        Int
+    name          String
+    creator       User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    participants  UserTeams[]
+    requestToTeam RequestToTeam[]
+}
+
+model UserTeams {
+    userId Int
+    user   User @relation(fields: [userId], references: [id])
+    teamId Int
+    team   Team @relation(fields: [teamId], references: [id])
+
+    @@id([userId, teamId])
+}
+
+model RequestToTeam {
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+    teamId    Int
+    team      Team     @relation(fields: [teamId], references: [id])
+    createdAt DateTime @updatedAt
+
+    @@id([userId, teamId])
+}
+
+model RequestToProject {
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+    projectId   Int
+    project   Project    @relation(fields: [projectId], references: [id])
+    createdAt DateTime @default(now())
+
+    @@id([userId, projectId])
+}
+
+model UserProjects {
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+    projectId   Int
+    project   Project    @relation(fields: [projectId], references: [id])
+    createdAt DateTime @default(now())
+
+    @@id([userId, projectId])
+}

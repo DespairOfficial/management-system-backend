@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      DATABASE_URL: 
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: "314159265"
+      POSTGRES_USER: sportschamp
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    volumes:  
+      - ~/Database/Postgres:/var/lib/postgresql/data
