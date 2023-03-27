@@ -18,8 +18,8 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
 
     const swaggerConfig = new DocumentBuilder()
-        .setTitle('RuChamp API')
-        .setDescription('Sports')
+        .setTitle('Management System API')
+        .setDescription('Management System')
         .setVersion('1.0.1')
         .addTag('APP')
         .build();

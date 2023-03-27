@@ -19,8 +19,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: "314159265"
-      POSTGRES_USER: sportschamp
+      POSTGRES_PASSWORD: "27182831415"
+      POSTGRES_USER: despair
       PGDATA: '/var/lib/postgresql/data/pgdata'
     volumes:  
       - ~/Database/Postgres:/var/lib/postgresql/data
