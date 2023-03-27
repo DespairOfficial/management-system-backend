@@ -4,7 +4,7 @@ import { Project } from '@prisma/client';
 export class ProjectEntity implements Project {
     @ApiProperty({
         example: 1,
-        description: 'Id of an event',
+        description: 'Id of a project',
     })
     id: number;
 

@@ -1,11 +1,11 @@
+import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-project.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { PrismaService } from './../database/prisma.service';
+import { PrismaService } from '../database/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { UpdateEventDto } from './dto/update-project.dto';
 
 @Injectable()
-export class EventService {
+export class ProjectService {
     constructor(private readonly prismaService: PrismaService) {}
     async create(userId: number, createProjectDto: CreateProjectDto) {
         return await this.prismaService.project.create({
@@ -25,9 +25,9 @@ export class EventService {
         });
     }
 
-    async update(id: number, updateEventDto: UpdateEventDto) {
+    async update(id: number, updateProjectDto: UpdateProjectDto) {
         return await this.prismaService.project.update({
-            data: updateEventDto,
+            data: updateProjectDto,
             where: {
                 id,
             },
@@ -42,7 +42,7 @@ export class EventService {
         });
     }
 
-    async requestToJoinEvent(userId: number, projectId: number) {
+    async requestToJoinProject(userId: number, projectId: number) {
         return await this.prismaService.requestToProject.create({
             data: {
                 userId,
@@ -50,7 +50,7 @@ export class EventService {
             },
         });
     }
-    async acceptRequestToJoinMyEvent(createRequestToJoinProjectDto: CreateRequestToJoinProjectDto) {
+    async acceptRequestToJoinMyProject(createRequestToJoinProjectDto: CreateRequestToJoinProjectDto) {
         await this.prismaService.requestToProject.delete({
             where: {
                 userId_projectId: {

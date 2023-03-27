@@ -1,3 +1,3 @@
 import { Project } from '@prisma/client';
 
-export class UpdateEventDto implements Partial<Project> {}
+export class UpdateProjectDto implements Partial<Project> {}

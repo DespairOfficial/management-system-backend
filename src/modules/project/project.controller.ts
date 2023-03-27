@@ -1,7 +1,8 @@
-import { CreateRequestToJoinEventDto } from './dto/create-request-to-join-project.dto';
-import { NO_RIGHTS, REQUEST_WAS_SEND } from './../../constants';
+import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-project.dto';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectEntity } from './entities/project.entity';
+import { NO_RIGHTS, REQUEST_WAS_SEND } from '../../constants';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
-import { EventEntity } from './entities/project.entity';
 import {
     Controller,
     Get,
@@ -16,97 +17,96 @@ import {
     InternalServerErrorException,
     BadRequestException,
 } from '@nestjs/common';
-import { EventService } from './event.service';
-import { CreateEventDto } from './dto/create-project.dto';
-import { UpdateEventDto } from './dto/update-project.dto';
+import {  ProjectService } from './project.service';
+import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
-@ApiTags('Events')
-@Controller('events')
-export class EventController {
-    constructor(private readonly eventService: EventService) {}
+@ApiTags('Projects')
+@Controller('projects')
+export class ProjectController {
+    constructor(private readonly projectService: ProjectService) {}
 
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: 'Create event' })
+    @ApiOperation({ summary: 'Create project' })
     @ApiCreatedResponse({
-        type: EventEntity,
+        type: ProjectEntity,
     })
     @Post()
-    async create(@Body() createEventDto: CreateEventDto, @Req() request: Request) {
+    async create(@Body() createProjectDto: CreateProjectDto, @Req() request: Request) {
         try {
-            return await this.eventService.create(request.user.id, createEventDto);
+            return await this.projectService.create(request.user.id, createProjectDto);
         } catch (error) {
             throw new InternalServerErrorException(error.message);
         }
     }
 
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: 'Update event' })
+    @ApiOperation({ summary: 'Update project' })
     @ApiOkResponse({
-        type: EventEntity,
+        type: ProjectEntity,
     })
     @Patch(':id')
-    async update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto, @Req() request: Request) {
-        const candidate = await this.eventService.findOne(+id);
+    async update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto, @Req() request: Request) {
+        const candidate = await this.projectService.findOne(+id);
         if (request.user.id !== candidate.userId) {
             throw new ForbiddenException('You have no rights to do that!');
         }
         try {
-            return await this.eventService.update(+id, updateEventDto);
+            return await this.projectService.update(+id, updateProjectDto);
         } catch (error) {
             throw new InternalServerErrorException(error.message);
         }
     }
 
     @UseGuards(JwtAuthGuard)
-    @ApiOperation({ summary: 'Delete event' })
+    @ApiOperation({ summary: 'Delete Project' })
     @ApiOkResponse({
-        type: EventEntity,
+        type: ProjectEntity,
     })
     @Delete(':id')
     async delete(@Param('id') id: string, @Req() request: Request) {
         try {
-            const candidate = await this.eventService.findOne(+id);
+            const candidate = await this.projectService.findOne(+id);
             if (request.user.id !== candidate.userId) {
                 throw new ForbiddenException('You have no rights to do that!');
             }
-            return await this.eventService.delete(+id);
+            return await this.projectService.delete(+id);
         } catch (error) {
             throw new InternalServerErrorException(error.message);
         }
     }
 
-    @ApiOperation({ summary: 'Get all events' })
+    @ApiOperation({ summary: 'Get all projects' })
     @ApiOkResponse({
-        type: [EventEntity],
+        type: [ProjectEntity],
     })
     @Get()
     async getAll(@Req() request: Request) {
         try {
-            return await this.eventService.findAll();
+            return await this.projectService.findAll();
         } catch (error) {
             throw new InternalServerErrorException(error.message);
         }
     }
 
-    @ApiOperation({ summary: 'Request to join event' })
+    @ApiOperation({ summary: 'Request to join project' })
     @ApiOkResponse({
         schema: {
             example: { message: 'Request was send!' },
         },
     })
     @UseGuards(JwtAuthGuard)
-    @Get('requestToJoin/:eventId')
-    async requestToJoinTeam(@Req() request: Request, @Param('eventId') eventId: string) {
+    @Get('requestToJoin/:projectId')
+    async requestToJoinTeam(@Req() request: Request, @Param('projectId') projectId: string) {
         try {
-            return await this.eventService.requestToJoinEvent(request.user.id, +eventId);
+            return await this.projectService.requestToJoinProject(request.user.id, +projectId);
         } catch (error) {
             throw new BadRequestException(REQUEST_WAS_SEND);
         }
     }
 
-    @ApiOperation({ summary: 'Accept request to join event' })
+    @ApiOperation({ summary: 'Accept request to join project' })
     @ApiOkResponse({
         schema: {
             example: { message: 'Request was accepted!' },
@@ -115,14 +115,14 @@ export class EventController {
     @Patch('acceptRequestToJoin')
     async acceptRequestToJoinMyTeam(
         @Req() request: Request,
-        @Body() createRequestToJoinEventDto: CreateRequestToJoinEventDto,
+        @Body() createRequestToJoinProjectDto: CreateRequestToJoinProjectDto,
     ) {
         try {
-            const event = await this.eventService.findOne(createRequestToJoinEventDto.eventId);
-            if (event.userId !== request.user.id) {
+            const project = await this.projectService.findOne(createRequestToJoinProjectDto.projectId);
+            if (project.userId !== request.user.id) {
                 throw new ForbiddenException(NO_RIGHTS);
             }
-            await this.eventService.acceptRequestToJoinMyEvent(createRequestToJoinEventDto);
+            await this.projectService.acceptRequestToJoinMyProject(createRequestToJoinProjectDto);
             return { message: 'Request was accepted!' };
         } catch (error) {
             throw error;

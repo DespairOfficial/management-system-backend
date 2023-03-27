@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { RankEntity } from 'src/modules/discipline/rank/entities/rank.entity';
 import { TeamEntity } from 'src/modules/team/entities/team.entity';
 import { PasswordEntity } from './password.enitity';
 
@@ -127,11 +126,6 @@ export class UserEntity implements User {
         type: PasswordEntity,
     })
     password?: PasswordEntity;
-
-	@ApiProperty({
-		type: [RankEntity]
-	})
-    ranks?: RankEntity[];
 
 	@ApiProperty({
 		type: [TeamEntity]
