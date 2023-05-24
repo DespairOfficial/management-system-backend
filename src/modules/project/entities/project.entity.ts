@@ -34,7 +34,13 @@ export class ProjectEntity implements Project {
 
     @ApiProperty({
         example: 10,
-        description: 'Allowed number of participants',
+        description: 'Budget of a project',
     })
-    numberOfParticipants: number;
+    budget: number;
+
+    @ApiProperty({
+        example: 'Ended',
+        description: 'Current status of a project',
+    })
+    status: string;
 }

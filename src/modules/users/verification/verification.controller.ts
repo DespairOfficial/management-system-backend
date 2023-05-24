@@ -1,9 +1,10 @@
-import { VerificationService } from 'src/modules/users/verification/verification.service';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Query } from '@nestjs/common';
 
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { Request } from 'express';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { VerifyEmailCodeDto } from './dto/verify-email-code.dto';
+import { VerificationService } from './verification.service';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Verification')
@@ -14,7 +15,7 @@ export class VerificationController {
     @ApiOperation({ summary: 'Verify user by code from email' })
     @ApiOkResponse()
     @Get()
-    verifyByCode(@Query('code') verificationCode: string, @Req() requset: Request) {
-        return this.verificationService.verifyUserByCode(requset.user.id, verificationCode);
+    verifyEmailByCode(@Query() verifyEmailCodeDto: VerifyEmailCodeDto, @Req() requset: Request) {
+        return this.verificationService.verifyEmailByCode(requset.user.id, verifyEmailCodeDto);
     }
 }

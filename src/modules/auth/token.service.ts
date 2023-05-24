@@ -18,7 +18,6 @@ export class TokenService {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            phone: user.phone,
             type: 'access_token',
         };
         return this.jwtService.sign(payload);

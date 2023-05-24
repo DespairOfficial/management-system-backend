@@ -13,14 +13,6 @@ export class CreateUserDto implements Partial<User> {
     readonly email: string;
 
     @ApiProperty({
-        example: '+79876543210',
-        description: 'Phone number ',
-    })
-    @IsString({ message: 'Must be string' })
-    @IsPhoneNumber('RU')
-    readonly phone: string;
-
-    @ApiProperty({
         example: 'Denis',
         description: 'Firstname of a user',
     })

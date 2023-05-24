@@ -9,7 +9,7 @@ import { Token } from 'src/interfaces/Token.interface';
 import { Tokens } from 'src/interfaces/Tokens.interface';
 import { AuthService } from './auth.service';
 import { JWT_TOKEN_EXAMPLE } from '../../constants';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LogInUserDto } from './dto/log-in-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { BrowserDataDto } from 'src/modules/users/dto/session/browser-data.dto';
@@ -22,7 +22,6 @@ export class AuthController {
     constructor(
         private authService: AuthService,
         private tokenService: TokenService,
-        private mailService: MailService,
     ) {}
 
     @ApiOperation({ summary: 'Log in' })
@@ -77,7 +76,6 @@ export class AuthController {
         status: 201,
     })
     @Patch('logout')
-    @UseGuards(JwtAuthGuard)
     async logout(@Req() request: Request, @Res({ passthrough: true }) res: Response) {
         const refreshToken: Token | undefined = request.cookies.refreshToken;
         if (refreshToken) {
@@ -86,7 +84,6 @@ export class AuthController {
         request.user = undefined;
         res.clearCookie('refreshToken');
     }
-
 
     @ApiOperation({ summary: 'Create new access token, and update refresh token' })
     @ApiResponse({
@@ -115,18 +112,11 @@ export class AuthController {
         res.cookie('refreshToken', tokens.refreshToken, { ...refreshCookieOptions, expires: expires });
         return { accessToken: tokens.accessToken };
     }
-    @Get('sendCode')
-	@ApiOperation({deprecated: true})
+
+    @Get('init')
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'Returns user instanse' })
     async sendVerCode(@Req() request: Request) {
-        const verificationCode = (Math.floor(Math.random() * 900000) + 99999).toString();
-        const user = {
-            email: 'grobamist@gmail.com',
-            phone: '12341234124',
-            firstName: 'Vladilen',
-            lastName: 'Minin',
-            referalCode: 'code',
-            userType: 1,
-        };
-        await this.mailService.sendUserConfirmation(user, verificationCode);
+        return request.user;
     }
 }

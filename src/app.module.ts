@@ -1,30 +1,17 @@
+import { ProjectModule } from './modules/project/project.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './modules/mail/mail.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
-import { TeamModule } from './modules/team/team.module';
+import { AppGateway } from './app.gateway';
+import { ConversationModule } from './modules/chat/conversation/conversation.module';
+import { MessageModule } from './modules/chat/message/message.module';
 
 @Module({
-    imports: [
-        ConfigModule.forRoot(),
-        AuthModule,
-        MailModule,
-        ThrottlerModule.forRoot({
-            ttl: 1,
-            limit: 5,
-        }),
-        TeamModule,
-    ],
+    imports: [ConfigModule.forRoot(), AuthModule, MailModule, ProjectModule, ConversationModule, MessageModule],
     controllers: [],
-    providers: [
-        {
-            provide: APP_GUARD,
-            useClass: ThrottlerGuard,
-        },
-    ],
+    providers: [AppGateway],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

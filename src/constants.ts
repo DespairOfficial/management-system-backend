@@ -8,8 +8,8 @@ export const TOKEN_OBJECT_EXAMPLE: Tokens = {
     refreshToken: JWT_TOKEN_EXAMPLE,
 };
 export const ITEM_DELETED = 'This item already deleted';
-export const NOT_AUTHORIZED = 'You are not authorized';
-export const NOT_AUTHORIZED_OR_BAD_TOKEN = 'You are not authorized or bad token';
+export const UNAUTHORIZED = 'You are not authorized';
+export const UNAUTHORIZED_OR_BAD_TOKEN = 'You are not authorized or bad token';
 export const UNKOWN_INTERNAL_ERROR = 'Something goes wrong...';
 export const NO_RIGHTS = 'You have no rigths for this';
 export const WRONG_ARGUMENTS = 'Please, check arguments again. There might be odd';

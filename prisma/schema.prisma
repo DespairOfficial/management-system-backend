@@ -11,30 +11,25 @@ datasource db {
 }
 
 model User {
-    id               Int              @id @default(autoincrement())
-    email            String?          @unique
-    firstName        String
-    lastName         String
-    patronymic       String?
-    gender           Boolean          @default(true)
-    isVerified       Boolean          @default(false)
-    isPublicProfile  Boolean          @default(false)
-    photo            String?
-    birthDate        DateTime?
-    verificationCode String?
-    phone            String?
-    address          String?
-    city             String?
-    district         String?
-    region           String?
-    session          Session[]
-    password         Password?
-    myTeams          Team[]
-    teams            UserTeams[]
+    id                 Int                @id @default(autoincrement())
+    email              String             @unique
+    firstName          String?
+    lastName           String?
+    gender             Boolean            @default(true)
+    isVerified         Boolean            @default(false)
+    session            Session[]
+    password           Password?
     myProjects         Project[]          @relation(name: "Creator of a project")
     projects           UserProjects[]
-    requestsToTeams  RequestToTeam[]
     requestsToProjects RequestToProject[]
+    verification       Verification?
+}
+
+model Verification {
+    userId                Int     @unique
+    user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    emailVerificationCode String?
+    forgotPasswordCode    String?
 }
 
 model Password {
@@ -54,53 +49,25 @@ model Session {
     expiresAt    DateTime
 }
 
-
 model Project {
-    id                       Int              @id @default(autoincrement())
-    userId                   Int
-    creator                  User             @relation(name: "Creator of a project", fields: [userId], references: [id])
-    name                     String
-    numberOfParticipants     Int
-    description              String
-    startsAt                 DateTime
-    participants             UserProjects[]
-    requestsToProject         RequestToProject[]
-}
-
-
-model Team {
-    id            Int             @id @default(autoincrement())
-    userId        Int
-    name          String
-    creator       User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    participants  UserTeams[]
-    requestToTeam RequestToTeam[]
-}
-
-model UserTeams {
-    userId Int
-    user   User @relation(fields: [userId], references: [id])
-    teamId Int
-    team   Team @relation(fields: [teamId], references: [id])
-
-    @@id([userId, teamId])
-}
-
-model RequestToTeam {
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    teamId    Int
-    team      Team     @relation(fields: [teamId], references: [id])
-    createdAt DateTime @updatedAt
-
-    @@id([userId, teamId])
+    id                Int                @id @default(autoincrement())
+    userId            Int
+    creator           User               @relation(name: "Creator of a project", fields: [userId], references: [id])
+    name              String
+    description       String
+    budget            Int
+    status            String
+    startsAt          DateTime
+    participants      UserProjects[]
+    requestsToProject RequestToProject[]
+    conversation      Conversation[]
 }
 
 model RequestToProject {
     userId    Int
     user      User     @relation(fields: [userId], references: [id])
-    projectId   Int
-    project   Project    @relation(fields: [projectId], references: [id])
+    projectId Int
+    project   Project  @relation(fields: [projectId], references: [id])
     createdAt DateTime @default(now())
 
     @@id([userId, projectId])
@@ -109,9 +76,34 @@ model RequestToProject {
 model UserProjects {
     userId    Int
     user      User     @relation(fields: [userId], references: [id])
-    projectId   Int
-    project   Project    @relation(fields: [projectId], references: [id])
+    projectId Int
+    project   Project  @relation(fields: [projectId], references: [id])
     createdAt DateTime @default(now())
 
     @@id([userId, projectId])
+}
+
+model Message {
+    id             Int          @id @default(autoincrement())
+    conversationId Int
+    conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId         Int
+    text           String
+    createdAt      DateTime     @default(now())
+}
+
+model Conversation {
+    id                  Int                  @id @default(autoincrement())
+    projectId           Int
+    project             Project              @relation(fields: [projectId], references: [id])
+    messages            Message[]
+    usersOnConversation UserOnConversation[]
+}
+
+model UserOnConversation {
+    conversationId Int
+    conversation   Conversation @relation(fields: [conversationId], references: [id])
+    userId         Int
+
+    @@id([conversationId, userId])
 }

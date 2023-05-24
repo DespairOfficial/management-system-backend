@@ -2,7 +2,7 @@ import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-proj
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectEntity } from './entities/project.entity';
 import { NO_RIGHTS, REQUEST_WAS_SEND } from '../../constants';
-import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import {
     Controller,
     Get,
@@ -22,8 +22,8 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
-@ApiTags('Projects')
-@Controller('projects')
+@ApiTags('Project')
+@Controller('project')
 export class ProjectController {
     constructor(private readonly projectService: ProjectService) {}
 

@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { NOT_AUTHORIZED, NOT_AUTHORIZED_OR_BAD_TOKEN } from 'src/constants';
+import { UNAUTHORIZED, UNAUTHORIZED_OR_BAD_TOKEN } from 'src/constants';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -17,7 +17,7 @@ export class JwtAuthGuard implements CanActivate {
             const bearer = authHeader.split(' ')[0];
             const token = authHeader.split(' ')[1];
             if (bearer !== 'Bearer' || !token) {
-                throw new UnauthorizedException({ message: NOT_AUTHORIZED });
+                throw new UnauthorizedException({ message: UNAUTHORIZED });
             }
             const user: User = this.jwtService.verify(token, { secret: accessTokenOptions.secret });
             req.user = user;
@@ -25,7 +25,7 @@ export class JwtAuthGuard implements CanActivate {
             return true;
         } catch (error) {
             logger.error(error);
-            throw new UnauthorizedException({ message: NOT_AUTHORIZED_OR_BAD_TOKEN });
+            throw new UnauthorizedException({ message: UNAUTHORIZED_OR_BAD_TOKEN });
         }
     }
 }

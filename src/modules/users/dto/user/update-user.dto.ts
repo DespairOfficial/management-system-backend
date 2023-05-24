@@ -12,14 +12,6 @@ export class UpdateUserDto implements Partial<User> {
     email: string;
 
     @ApiProperty({
-        example: '+79876543210',
-        description: 'Phone number of user',
-    })
-    @IsPhoneNumber()
-    @IsString()
-    phone: string;
-
-    @ApiProperty({
         example: 'Denis',
         description: 'Firstname of user',
     })
@@ -33,13 +25,6 @@ export class UpdateUserDto implements Partial<User> {
     @IsString()
     lastName: string;
 
-    @ApiProperty({
-        example: 'Sergeevich',
-        description: 'Middlename, patronymic of user',
-    })
-    @IsString()
-	@IsOptional()
-    patronymic: string;
 
     @ApiProperty({
         example: 'true',
@@ -48,13 +33,6 @@ export class UpdateUserDto implements Partial<User> {
     @IsBoolean()
     gender: boolean;
 
-    @ApiProperty({
-        example: 'true',
-        description: 'Is profile public',
-    })
-    @IsBoolean()
-	@IsOptional()
-    isPublicProfile: boolean;
 
     @ApiProperty({
         example: 'me.jpg',
@@ -62,7 +40,7 @@ export class UpdateUserDto implements Partial<User> {
     })
     @IsString()
 	@IsOptional()
-    photo: string;
+    image: string;
 
     @ApiProperty({
         example: '11.01.2011',
@@ -72,51 +50,4 @@ export class UpdateUserDto implements Partial<User> {
 	@IsOptional()
     birthDate: Date;
 
-    @ApiProperty({
-        example: 178,
-        description: 'Height in metric sys',
-    })
-    @IsNumber()
-	@IsOptional()
-    height: number;
-
-    @ApiProperty({
-        example: 78,
-        description: 'Weight in metric sys',
-    })
-    @IsNumber()
-	@IsOptional()
-    weight: number;
-
-    @ApiProperty({
-        example: 'Puskina, 42',
-        description: 'Address: home, palace',
-    })
-    @IsString()
-	@IsOptional()
-    address: string;
-
-    @ApiProperty({
-        example: 'Kazan',
-        description: 'City',
-    })
-    @IsString()
-	@IsOptional()
-    city: string;
-
-    @ApiProperty({
-        example: 'Pervomayskiy',
-        description: 'District',
-    })
-    @IsString()
-	@IsOptional()
-    district: string;
-
-    @ApiProperty({
-        example: 'Tatarstan',
-        description: 'Region',
-    })
-    @IsString()
-	@IsOptional()
-    region: string;
 }

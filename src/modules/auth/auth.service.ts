@@ -3,7 +3,6 @@ import { PasswordsService } from '../users/password/passwords.service';
 import AuthResult  from '../../interfaces/AuthResult.interface';
 import { CreateUserDto } from 'src/modules/users/dto/user/create-user.dto';
 import { BrowserDataDto } from '../users/dto/session/browser-data.dto';
-import { createHmac } from 'crypto';
 import { SessionService } from '../users/session/session.service';
 import { TokenService } from './token.service';
 import { LogInUserDto } from './dto/log-in-user.dto';
@@ -35,7 +34,6 @@ export class AuthService {
         private mailService: MailService,
         private verificationService: VerificationService,
     ) {}
-    private readonly logger = new Logger(AuthService.name);
     private async validateLogin(userDto: LogInUserDto): Promise<User> {
         const user = await this.usersService.findOneByEmail(userDto.email);
         if (user) {
@@ -81,7 +79,6 @@ export class AuthService {
 
         const userDto: CreateUserDto = {
             email: registerUserDto.email,
-            phone: registerUserDto.phone,
             firstName: registerUserDto.firstName,
             lastName: registerUserDto.lastName,
         };
@@ -93,7 +90,7 @@ export class AuthService {
         const tokens = await this.tokenService.createTokensAndSession(user, browserDataDto);
         try {
             const verificationCode = (Math.floor(Math.random() * 900000) + 99999).toString();
-            await this.verificationService.setVerificationCodeToUser(user.id, verificationCode);
+            await this.verificationService.setEmailVerificationCodeToUser(user.id, verificationCode);
             await this.mailService.sendUserConfirmation(user, verificationCode);
         } catch {
             throw new InternalServerErrorException('Error during sending confirmation code...');
