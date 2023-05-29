@@ -5,8 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ProjectController } from './project.controller';
 
 @Module({
-    controllers: [ProjectController],
-    providers: [ProjectService],
-    imports: [DatabaseModule, JwtModule],
+  controllers: [ProjectController],
+  providers: [ProjectService],
+  imports: [DatabaseModule, JwtModule],
 })
 export class ProjectModule {}

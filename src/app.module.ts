@@ -9,12 +9,12 @@ import { ConversationModule } from './modules/chat/conversation/conversation.mod
 import { MessageModule } from './modules/chat/message/message.module';
 
 @Module({
-    imports: [ConfigModule.forRoot(), AuthModule, MailModule, ProjectModule, ConversationModule, MessageModule],
-    controllers: [],
-    providers: [AppGateway],
+  imports: [ConfigModule.forRoot(), AuthModule, MailModule, ProjectModule, ConversationModule, MessageModule],
+  controllers: [],
+  providers: [AppGateway],
 })
 export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoggerMiddleware).forRoutes('/');
-    }
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('/');
+  }
 }

@@ -8,24 +8,24 @@ import { UNAUTHORIZED, UNAUTHORIZED_OR_BAD_TOKEN } from 'src/constants';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) {}
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const req = context.switchToHttp().getRequest<Request>();
-        const logger = new Logger('JwtAuthGuard');
-        try {
-            const authHeader = req.headers.authorization;
-            const bearer = authHeader.split(' ')[0];
-            const token = authHeader.split(' ')[1];
-            if (bearer !== 'Bearer' || !token) {
-                throw new UnauthorizedException({ message: UNAUTHORIZED });
-            }
-            const user: User = this.jwtService.verify(token, { secret: accessTokenOptions.secret });
-            req.user = user;
+  constructor(private jwtService: JwtService) {}
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const req = context.switchToHttp().getRequest<Request>();
+    const logger = new Logger('JwtAuthGuard');
+    try {
+      const authHeader = req.headers.authorization;
+      const bearer = authHeader.split(' ')[0];
+      const token = authHeader.split(' ')[1];
+      if (bearer !== 'Bearer' || !token) {
+        throw new UnauthorizedException({ message: UNAUTHORIZED });
+      }
+      const user: User = this.jwtService.verify(token, { secret: accessTokenOptions.secret });
+      req.user = user;
 
-            return true;
-        } catch (error) {
-            logger.error(error);
-            throw new UnauthorizedException({ message: UNAUTHORIZED_OR_BAD_TOKEN });
-        }
+      return true;
+    } catch (error) {
+      logger.error(error);
+      throw new UnauthorizedException({ message: UNAUTHORIZED_OR_BAD_TOKEN });
     }
+  }
 }

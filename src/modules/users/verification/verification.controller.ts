@@ -10,12 +10,12 @@ import { VerificationService } from './verification.service';
 @ApiTags('Verification')
 @Controller('verification')
 export class VerificationController {
-    constructor(private readonly verificationService: VerificationService) {}
+  constructor(private readonly verificationService: VerificationService) {}
 
-    @ApiOperation({ summary: 'Verify user by code from email' })
-    @ApiOkResponse()
-    @Get()
-    verifyEmailByCode(@Query() verifyEmailCodeDto: VerifyEmailCodeDto, @Req() requset: Request) {
-        return this.verificationService.verifyEmailByCode(requset.user.id, verifyEmailCodeDto);
-    }
+  @ApiOperation({ summary: 'Verify user by code from email' })
+  @ApiOkResponse()
+  @Get()
+  verifyEmailByCode(@Query() verifyEmailCodeDto: VerifyEmailCodeDto, @Req() requset: Request) {
+    return this.verificationService.verifyEmailByCode(requset.user.id, verifyEmailCodeDto);
+  }
 }

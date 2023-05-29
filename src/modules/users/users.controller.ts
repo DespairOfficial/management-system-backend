@@ -1,4 +1,4 @@
-import { UserInfoDto } from './dto/user/user-info.dto';
+import { UserInfoEntity } from './entities/user-info.entity';
 import { UpdateUserDto } from './dto/user/update-user.dto';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
@@ -11,18 +11,18 @@ import { BAD_TARGET } from 'src/constants';
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
-    @ApiOperation({ summary: 'update self user info' })
-    @ApiOkResponse({
-        type: UserInfoDto,
-    })
-    @Patch()
-    async updateUser(@Body() updateUserDto: UpdateUserDto, @Req() request: Request) {
-        try {
-            return await this.usersService.update(request.user.id, updateUserDto);
-        } catch (error) {
-            throw new BadRequestException(BAD_TARGET);
-        }
+  @ApiOperation({ summary: 'update self user info' })
+  @ApiOkResponse({
+    type: UserInfoEntity,
+  })
+  @Patch()
+  async updateUser(@Body() updateUserDto: UpdateUserDto, @Req() request: Request) {
+    try {
+      return await this.usersService.update(request.user.id, updateUserDto);
+    } catch (error) {
+      throw new BadRequestException(BAD_TARGET);
     }
+  }
 }

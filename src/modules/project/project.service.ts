@@ -6,61 +6,61 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ProjectService {
-    constructor(private readonly prismaService: PrismaService) {}
-    async create(userId: number, createProjectDto: CreateProjectDto) {
-        return await this.prismaService.project.create({
-            data: { ...createProjectDto, userId },
-        });
-    }
+  constructor(private readonly prismaService: PrismaService) {}
+  async create(userId: number, createProjectDto: CreateProjectDto) {
+    return await this.prismaService.project.create({
+      data: { ...createProjectDto, userId },
+    });
+  }
 
-    async findAll() {
-        return await this.prismaService.project.findMany();
-    }
+  async findAll() {
+    return await this.prismaService.project.findMany();
+  }
 
-    async findOne(id: number) {
-        return await this.prismaService.project.findFirst({
-            where: {
-                id,
-            },
-        });
-    }
+  async findOne(id: number) {
+    return await this.prismaService.project.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
 
-    async update(id: number, updateProjectDto: UpdateProjectDto) {
-        return await this.prismaService.project.update({
-            data: updateProjectDto,
-            where: {
-                id,
-            },
-        });
-    }
+  async update(id: number, updateProjectDto: UpdateProjectDto) {
+    return await this.prismaService.project.update({
+      data: updateProjectDto,
+      where: {
+        id,
+      },
+    });
+  }
 
-    async delete(id: number) {
-        return await this.prismaService.project.delete({
-            where: {
-                id,
-            },
-        });
-    }
+  async delete(id: number) {
+    return await this.prismaService.project.delete({
+      where: {
+        id,
+      },
+    });
+  }
 
-    async requestToJoinProject(userId: number, projectId: number) {
-        return await this.prismaService.requestToProject.create({
-            data: {
-                userId,
-                projectId,
-            },
-        });
-    }
-    async acceptRequestToJoinMyProject(createRequestToJoinProjectDto: CreateRequestToJoinProjectDto) {
-        await this.prismaService.requestToProject.delete({
-            where: {
-                userId_projectId: {
-                    userId: createRequestToJoinProjectDto.userId,
-                    projectId: createRequestToJoinProjectDto.projectId,
-                },
-            },
-        });
-        await this.prismaService.userProjects.create({
-            data: { projectId: createRequestToJoinProjectDto.projectId, userId: createRequestToJoinProjectDto.userId },
-        });
-    }
+  async requestToJoinProject(userId: number, projectId: number) {
+    return await this.prismaService.requestToProject.create({
+      data: {
+        userId,
+        projectId,
+      },
+    });
+  }
+  async acceptRequestToJoinMyProject(createRequestToJoinProjectDto: CreateRequestToJoinProjectDto) {
+    await this.prismaService.requestToProject.delete({
+      where: {
+        userId_projectId: {
+          userId: createRequestToJoinProjectDto.userId,
+          projectId: createRequestToJoinProjectDto.projectId,
+        },
+      },
+    });
+    await this.prismaService.userOnProject.create({
+      data: { projectId: createRequestToJoinProjectDto.projectId, userId: createRequestToJoinProjectDto.userId },
+    });
+  }
 }

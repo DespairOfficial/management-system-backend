@@ -2,108 +2,128 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id                 Int                @id @default(autoincrement())
-    email              String             @unique
-    firstName          String?
-    lastName           String?
-    gender             Boolean            @default(true)
-    isVerified         Boolean            @default(false)
-    session            Session[]
-    password           Password?
-    myProjects         Project[]          @relation(name: "Creator of a project")
-    projects           UserProjects[]
-    requestsToProjects RequestToProject[]
-    verification       Verification?
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique
+  firstName          String?
+  lastName           String?
+  gender             Boolean              @default(true)
+  isVerified         Boolean              @default(false)
+  session            Session[]
+  password           Password?
+  myProjects         Project[]            @relation(name: "Creator of a project")
+  projects           UserOnProject[]
+  requestsToProjects RequestToProject[]
+  verification       Verification?
+  conversations      UserOnConversation[]
+
+  contacts        Contacts[] @relation(name: "contacts")
+  whereInContacts Contacts[] @relation(name: "incontacts")
 }
 
 model Verification {
-    userId                Int     @unique
-    user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    emailVerificationCode String?
-    forgotPasswordCode    String?
+  userId                Int     @unique
+  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  emailVerificationCode String?
+  forgotPasswordCode    String?
 }
 
 model Password {
-    userId   Int    @unique
-    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    password String
+  userId   Int    @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  password String
 }
 
 model Session {
-    id           Int      @id @default(autoincrement())
-    userId       Int
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    refreshToken String   @unique
-    fingerprint  String   @unique
-    ip           String
-    userAgent    String
-    expiresAt    DateTime
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  refreshToken String   @unique
+  fingerprint  String   @unique
+  ip           String
+  userAgent    String
+  expiresAt    DateTime
 }
 
 model Project {
-    id                Int                @id @default(autoincrement())
-    userId            Int
-    creator           User               @relation(name: "Creator of a project", fields: [userId], references: [id])
-    name              String
-    description       String
-    budget            Int
-    status            String
-    startsAt          DateTime
-    participants      UserProjects[]
-    requestsToProject RequestToProject[]
-    conversation      Conversation[]
+  id                Int                @id @default(autoincrement())
+  userId            Int
+  creator           User               @relation(name: "Creator of a project", fields: [userId], references: [id])
+  name              String
+  description       String
+  budget            Int
+  status            String
+  startsAt          DateTime
+  participants      UserOnProject[]
+  requestsToProject RequestToProject[]
+  conversation      Conversation[]
 }
 
 model RequestToProject {
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    projectId Int
-    project   Project  @relation(fields: [projectId], references: [id])
-    createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
 
-    @@id([userId, projectId])
+  @@id([userId, projectId])
 }
 
-model UserProjects {
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    projectId Int
-    project   Project  @relation(fields: [projectId], references: [id])
-    createdAt DateTime @default(now())
+model UserOnProject {
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
 
-    @@id([userId, projectId])
+  @@id([userId, projectId])
 }
 
 model Message {
-    id             Int          @id @default(autoincrement())
-    conversationId Int
-    conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    userId         Int
-    text           String
-    createdAt      DateTime     @default(now())
+  id             Int          @id @default(autoincrement())
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId         Int
+  text           String
+  createdAt      DateTime     @default(now())
 }
 
 model Conversation {
-    id                  Int                  @id @default(autoincrement())
-    projectId           Int
-    project             Project              @relation(fields: [projectId], references: [id])
-    messages            Message[]
-    usersOnConversation UserOnConversation[]
+  id           Int                  @id @default(autoincrement())
+  projectId    Int
+  project      Project              @relation(fields: [projectId], references: [id])
+  messages     Message[]
+  participants UserOnConversation[]
+  type         ConversationType     @default(GROUP)
 }
 
 model UserOnConversation {
-    conversationId Int
-    conversation   Conversation @relation(fields: [conversationId], references: [id])
-    userId         Int
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
 
-    @@id([conversationId, userId])
+  @@id([conversationId, userId])
+}
+
+model Contacts {
+  userId    Int
+  user      User @relation(name: "contacts", fields: [userId], references: [id])
+  contactId Int
+  contact   User @relation(name: "incontacts", fields: [contactId], references: [id])
+
+  @@id([userId, contactId])
+}
+
+enum ConversationType {
+  ONE_TO_ONE
+  GROUP
 }

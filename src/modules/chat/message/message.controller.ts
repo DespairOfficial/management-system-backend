@@ -5,5 +5,5 @@ import { MessageService } from './message.service';
 @ApiTags('Message')
 @Controller('message')
 export class MessageController {
-    constructor(private readonly messageService: MessageService) {}
+  constructor(private readonly messageService: MessageService) {}
 }

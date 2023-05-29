@@ -7,16 +7,16 @@ import { accessTokenOptions } from '../../config/jwtOptions';
 import { TokenService } from './token.service';
 import { MailModule } from 'src/modules/mail/mail.module';
 @Module({
-    imports: [
-        forwardRef(() => UsersModule),
-        JwtModule.register({
-            secret: accessTokenOptions.secret,
-            signOptions: { expiresIn: accessTokenOptions.expiresIn },
-        }),
-        MailModule,
-    ],
-    controllers: [AuthController],
-    providers: [AuthService, TokenService],
-    exports: [AuthService],
+  imports: [
+    forwardRef(() => UsersModule),
+    JwtModule.register({
+      secret: accessTokenOptions.secret,
+      signOptions: { expiresIn: accessTokenOptions.expiresIn },
+    }),
+    MailModule,
+  ],
+  controllers: [AuthController],
+  providers: [AuthService, TokenService],
+  exports: [AuthService],
 })
 export class AuthModule {}
