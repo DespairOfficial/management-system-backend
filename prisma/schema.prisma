@@ -11,19 +11,23 @@ datasource db {
 }
 
 model User {
-  id                 Int                  @id @default(autoincrement())
-  email              String               @unique
-  firstName          String?
-  lastName           String?
-  gender             Boolean              @default(true)
-  isVerified         Boolean              @default(false)
-  session            Session[]
-  password           Password?
-  myProjects         Project[]            @relation(name: "Creator of a project")
-  projects           UserOnProject[]
-  requestsToProjects RequestToProject[]
-  verification       Verification?
-  conversations      UserOnConversation[]
+  id                  Int                        @id @default(autoincrement())
+  email               String                     @unique
+  name                String
+  username            String
+  gender              Boolean                    @default(true)
+  isVerified          Boolean                    @default(false)
+  image               String?
+  lastActivity        DateTime?
+  status              OnlineStatus               @default(offline)
+  session             Session[]
+  password            Password?
+  myProjects          Project[]                  @relation(name: "Creator of a project")
+  projects            UserOnProject[]
+  requestsToProjects  RequestToProject[]
+  verification        Verification?
+  conversations       UserOnConversation[]
+  unseenConversations UserOnUnseenConversation[]
 
   contacts        Contacts[] @relation(name: "contacts")
   whereInContacts Contacts[] @relation(name: "incontacts")
@@ -88,24 +92,48 @@ model UserOnProject {
 }
 
 model Message {
-  id             Int          @id @default(autoincrement())
+  id             Int                @id @default(autoincrement())
   conversationId Int
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId         Int
-  text           String
-  createdAt      DateTime     @default(now())
+  conversation   Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  senderId       Int
+  body           String
+  attachments    Attachment[]
+  contentType    MessageContentType @default(text)
+  createdAt      DateTime           @default(now())
+}
+
+model Attachment {
+  id           Int      @id @default(autoincrement())
+  messageId    Int
+  message      Message  @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name         String
+  size         Int
+  type         String
+  path         String
+  createdAt  DateTime  @default(now())
+  updatedAt DateTime  @default(now())
 }
 
 model Conversation {
-  id           Int                  @id @default(autoincrement())
-  projectId    Int
-  project      Project              @relation(fields: [projectId], references: [id])
-  messages     Message[]
-  participants UserOnConversation[]
-  type         ConversationType     @default(GROUP)
+  id                       Int                        @id @default(autoincrement())
+  projectId                Int
+  project                  Project                    @relation(fields: [projectId], references: [id])
+  messages                 Message[]
+  participants             UserOnConversation[]
+  type                     ConversationType           @default(GROUP)
+  userOnUnseenConversation UserOnUnseenConversation[]
 }
 
 model UserOnConversation {
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@id([conversationId, userId])
+}
+
+model UserOnUnseenConversation {
   conversationId Int
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   userId         Int
@@ -126,4 +154,16 @@ model Contacts {
 enum ConversationType {
   ONE_TO_ONE
   GROUP
+}
+
+enum OnlineStatus {
+  online
+  offline
+  away
+  busy
+}
+
+enum MessageContentType {
+  image
+  text
 }

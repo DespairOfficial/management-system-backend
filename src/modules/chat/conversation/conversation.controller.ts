@@ -1,7 +1,7 @@
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { ConversationService } from './conversation.service';
 import { ConversationEntity } from './entity/conversation.entity';
-import { Controller, Get, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Req, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
@@ -28,16 +28,14 @@ export class ConversationController {
     const id = conversationKey.split('_')[1];
     return await this.conversationService.getParticipants(+id);
   }
-	
-	@ApiOperation({ summary: 'Get by conversation key' })
+
+  @ApiOperation({ summary: 'Get by conversation key' })
   @ApiOkResponse({
     type: ConversationEntity,
   })
-  @Get(':conversationKey')
-  async getByConversationKey(@Param('conversationKey') conversationKey: string) {
-    console.log(conversationKey);
-
-    const id = conversationKey.split('_')[1];
+  @Get(':key')
+  async getByConversationKey(@Param('key') key: string) {
+    const id = key.split('_')[1];
     return await this.conversationService.findById(+id);
   }
 
@@ -50,5 +48,12 @@ export class ConversationController {
     return await this.conversationService.findWhereUser(+request.user.id);
   }
 
- 
+  @ApiOperation({ summary: 'Mark conversation as seen' })
+  @ApiOkResponse({
+    type: ConversationEntity,
+  })
+  @Delete('mark-as-seen/:conversationId')
+  async markAsSeen(@Param('conversationId', ParseIntPipe) conversationId: number, @Req() request: Request) {
+    return await this.conversationService.markAsSeen(request.user.id ,conversationId);
+  }
 }

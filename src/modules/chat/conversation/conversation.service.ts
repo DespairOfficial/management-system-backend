@@ -14,7 +14,7 @@ export class ConversationService {
   }
 
   async findWhereUser(userId: number) {
-    return await this.prismaService.conversation.findMany({
+    const conversations = await this.prismaService.conversation.findMany({
       where: {
         participants: {
           some: {
@@ -24,25 +24,37 @@ export class ConversationService {
       },
       include: {
         messages: true,
-        participants: true,
+        participants: {
+          select: {
+            user: true,
+          },
+        },
       },
+    });
+    return conversations.map((item) => {
+      const participants = item.participants.map((participant) => {
+        return participant.user;
+      });
+      return { ...item, participants };
     });
   }
 
   async findById(id: number) {
-    return await this.prismaService.conversation.findFirstOrThrow({
+    const conversation = await this.prismaService.conversation.findFirstOrThrow({
       where: {
         id,
       },
       include: {
         messages: true,
         participants: {
-          include: {
+          select: {
             user: true,
           },
         },
       },
     });
+    const participants = conversation.participants.map((item) => item.user);
+    return { ...conversation, participants };
   }
 
   async getParticipants(id: number) {
@@ -75,5 +87,25 @@ export class ConversationService {
         },
       },
     });
+  }
+
+  async markAsSeen(userId: number, conversationId: number) {
+    const candidate = await this.prismaService.userOnUnseenConversation.findFirst({
+      where: {
+        conversationId,
+        userId,
+      },
+    });
+
+    if (candidate) {
+      return this.prismaService.userOnUnseenConversation.delete({
+        where: {
+          conversationId_userId: {
+            conversationId,
+            userId,
+          },
+        },
+      });
+    }
   }
 }

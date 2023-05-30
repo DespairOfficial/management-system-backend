@@ -73,8 +73,8 @@ export class AuthService {
 
     const userDto: CreateUserDto = {
       email: registerUserDto.email,
-      firstName: registerUserDto.firstName,
-      lastName: registerUserDto.lastName,
+      name: registerUserDto.name,
+      username: registerUserDto.username,
     };
     const password = registerUserDto.password;
 

@@ -17,18 +17,28 @@ export class MessageService {
 
   // создание сообщения
   async create(userId: number, createMessageDto: CreateMessageDto) {
-    return this.prismaService.message.create({
-      data: {
-        userId,
-        ...createMessageDto,
-      },
-    });
+    if (createMessageDto.attachments && createMessageDto.attachments.length > 0) {
+			createMessageDto.attachments.map((attachment)=>{
+				
+				console.log(attachment);
+				
+			})
+
+    }
+
+    return '';
+    // return this.prismaService.message.create({
+    //   data: {
+    //     senderId: userId,
+    //     ...createMessageDto,
+    //   },
+    // });
   }
 
   // обновление сообщения
-  async updateMessage(id: number, createMessageDto: CreateMessageDto) {
-    return this.prismaService.message.update({ where: { id }, data: createMessageDto });
-  }
+  // async updateMessage(id: number, createMessageDto: CreateMessageDto) {
+  //   return this.prismaService.message.update({ where: { id }, data: createMessageDto });
+  // }
 
   // удаление сообщения
   async removeMessage(id: number) {
