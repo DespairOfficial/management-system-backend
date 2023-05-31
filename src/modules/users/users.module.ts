@@ -9,11 +9,12 @@ import { UsersController } from './users.controller';
 import { PasswordsService } from './password/passwords.service';
 import { VerificationService } from './verification/verification.service';
 import { VerificationController } from './verification/verification.controller';
+import { FileModule } from '../file/file.module';
 
 @Module({
   controllers: [UsersController, VerificationController, ContactsController],
   providers: [UsersService, SessionService, PasswordsService, VerificationService, ContactsService],
   exports: [UsersService, SessionService, PasswordsService, VerificationService],
-  imports: [DatabaseModule, JwtModule],
+  imports: [DatabaseModule, JwtModule, FileModule],
 })
 export class UsersModule {}

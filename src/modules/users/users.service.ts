@@ -1,3 +1,4 @@
+import { FileService } from './../file/file.service';
 import { PrismaService } from 'src/modules/database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/user/create-user.dto';
@@ -6,7 +7,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService, private fileService: FileService) {}
   async create(createUserDto: CreateUserDto, password: string): Promise<User> {
     const user = await this.prismaService.user.create({
       data: {
@@ -35,12 +36,19 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto, image: Express.Multer.File): Promise<User> {
+    const userBeforeUpdate = await this.prismaService.user.findFirstOrThrow({
+      where: { id },
+    });
+    const { setImageToNull, ...updateDto } = updateUserDto;
+
+    const filename = await this.fileService.updateMulterFile(image, 'users', userBeforeUpdate.image, setImageToNull);
+
     return await this.prismaService.user.update({
       where: {
         id: id,
       },
-      data: updateUserDto,
+      data: { ...updateDto, image: filename },
     });
   }
 

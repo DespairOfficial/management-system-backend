@@ -1,4 +1,4 @@
-import { ConversationType } from './../../../../@types/conversationTypes';
+import { ConversationType } from '../../../../@types/conversation';
 import { UserInfoEntity } from './../../../users/entities/user-info.entity';
 import { Conversation } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';

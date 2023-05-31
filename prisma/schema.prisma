@@ -18,6 +18,10 @@ model User {
   gender              Boolean                    @default(true)
   isVerified          Boolean                    @default(false)
   image               String?
+  country             String?
+  phoneNumber         String?
+  company             String?
+  role                String?
   lastActivity        DateTime?
   status              OnlineStatus               @default(offline)
   session             Session[]
@@ -103,15 +107,15 @@ model Message {
 }
 
 model Attachment {
-  id           Int      @id @default(autoincrement())
-  messageId    Int
-  message      Message  @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  name         String
-  size         Int
-  type         String
-  path         String
-  createdAt  DateTime  @default(now())
-  updatedAt DateTime  @default(now())
+  id        Int      @id @default(autoincrement())
+  messageId Int
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name      String
+  size      Int
+  type      String
+  path      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Conversation {

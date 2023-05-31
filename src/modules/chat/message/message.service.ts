@@ -1,10 +1,12 @@
+import { AttachmentEntity } from './attachment/entity/attachment.entity';
+import { FileService } from './../../file/file.service';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 
 @Injectable()
 export class MessageService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService, private readonly fileService: FileService) {}
   // получение всех сообщений
   async findAll() {
     return this.prismaService.message.findMany();
@@ -17,22 +19,38 @@ export class MessageService {
 
   // создание сообщения
   async create(userId: number, createMessageDto: CreateMessageDto) {
-    if (createMessageDto.attachments && createMessageDto.attachments.length > 0) {
-			createMessageDto.attachments.map((attachment)=>{
-				
-				console.log(attachment);
-				
-			})
+    const { attachments, ...createDto } = createMessageDto;
 
+    const attachmentObjects: Pick<AttachmentEntity, 'name' | 'type' | 'size' | 'path'>[] = [];
+
+    if (attachments && attachments.length > 0) {
+      await Promise.all(
+        attachments.map(async (attachment) => {
+          const path = await this.fileService.updateBufferFile(attachment.file, attachment.name, 'attachments');
+          attachmentObjects.push({
+            name: attachment.name,
+            type: attachment.type,
+            size: attachment.size,
+            path: path,
+          });
+        }),
+      );
     }
 
-    return '';
-    // return this.prismaService.message.create({
-    //   data: {
-    //     senderId: userId,
-    //     ...createMessageDto,
-    //   },
-    // });
+    return this.prismaService.message.create({
+      data: {
+        senderId: userId,
+        ...createDto,
+        attachments: {
+          createMany: {
+            data: attachmentObjects,
+          },
+        },
+      },
+      include: {
+        attachments: true,
+      },
+    });
   }
 
   // обновление сообщения

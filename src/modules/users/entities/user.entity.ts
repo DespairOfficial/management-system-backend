@@ -3,6 +3,7 @@ import { OnlineStatus, User } from '@prisma/client';
 import { PasswordEntity } from './password.enitity';
 
 export class UserEntity implements User {
+	
   @ApiProperty({
     example: '1',
     description: 'Id of user',
@@ -67,4 +68,24 @@ export class UserEntity implements User {
     type: PasswordEntity,
   })
   password?: PasswordEntity;
+
+	@ApiProperty({
+		example: 'Canada',
+  })
+	country: string;
+
+	@ApiProperty({
+		example: '+99876543210',
+  })
+	phoneNumber: string;
+
+	@ApiProperty({
+		example: 'Google Inc.',
+  })
+	company: string;
+
+	@ApiProperty({
+		example: 'admin',
+  })
+	role: string;
 }

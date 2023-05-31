@@ -1,8 +1,8 @@
-import { User } from '@prisma/client';
+import { OnlineStatus, User } from '@prisma/client';
 import { IsBoolean, IsDate, IsEmail, IsOptional, IsString } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateUserDto implements Partial<User> {
+export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActivity' | 'status'> {
   @ApiProperty({
     example: 'user@mail.com',
     description: 'Email of user',
@@ -12,18 +12,18 @@ export class UpdateUserDto implements Partial<User> {
   email: string;
 
   @ApiProperty({
-    example: 'Denis',
-    description: 'Firstname of user',
+    example: 'Denis Wolf',
+    description: 'Actual name of user',
   })
   @IsString()
-  firstName: string;
+  name: string;
 
   @ApiProperty({
-    example: 'Wolf',
-    description: 'Lastname of user',
+    example: 'DW',
+    description: 'Username',
   })
   @IsString()
-  lastName: string;
+  username: string;
 
   @ApiProperty({
     example: 'true',
@@ -47,4 +47,32 @@ export class UpdateUserDto implements Partial<User> {
   @IsDate()
   @IsOptional()
   birthDate: Date;
+
+  @ApiProperty({
+    example: true,
+    description: 'Used when users wants to delete his image',
+  })
+  @IsBoolean()
+  @IsOptional()
+  setImageToNull: boolean;
+
+  @ApiProperty({
+    example: 'Canada',
+  })
+  country: string;
+
+  @ApiProperty({
+    example: '+99876543210',
+  })
+  phoneNumber: string;
+
+  @ApiProperty({
+    example: 'Google Inc.',
+  })
+  company: string;
+
+  @ApiProperty({
+    example: 'admin',
+  })
+  role: string;
 }

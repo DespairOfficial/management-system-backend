@@ -23,7 +23,11 @@ export class ConversationService {
         },
       },
       include: {
-        messages: true,
+        messages: {
+          include: {
+            attachments: true,
+          },
+        },
         participants: {
           select: {
             user: true,
@@ -45,7 +49,11 @@ export class ConversationService {
         id,
       },
       include: {
-        messages: true,
+        messages: {
+          include: {
+            attachments: true,
+          },
+        },
         participants: {
           select: {
             user: true,

@@ -7,9 +7,21 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AppGateway } from './app.gateway';
 import { ConversationModule } from './modules/chat/conversation/conversation.module';
 import { MessageModule } from './modules/chat/message/message.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, MailModule, ProjectModule, ConversationModule, MessageModule],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule,
+    MailModule,
+    ProjectModule,
+    ConversationModule,
+    MessageModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'static', 'uploads'), // <-- path to the static files
+    }),
+  ],
   controllers: [],
   providers: [AppGateway],
 })
