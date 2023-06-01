@@ -3,7 +3,6 @@ import { OnlineStatus, User } from '@prisma/client';
 import { PasswordEntity } from './password.enitity';
 
 export class UserEntity implements User {
-	
   @ApiProperty({
     example: '1',
     description: 'Id of user',
@@ -16,7 +15,7 @@ export class UserEntity implements User {
   })
   email: string;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'Denis Wolf',
     description: 'Fullanme of a user',
   })
@@ -52,13 +51,13 @@ export class UserEntity implements User {
   })
   birthDate: Date;
 
-	@ApiProperty({
+  @ApiProperty({
     example: '11.01.2011',
     description: 'Last activity',
   })
   lastActivity: Date;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'online',
     description: 'user online status',
   })
@@ -69,23 +68,23 @@ export class UserEntity implements User {
   })
   password?: PasswordEntity;
 
-	@ApiProperty({
-		example: 'Canada',
+  @ApiProperty({
+    example: 'Canada',
   })
-	country: string;
+  country: string;
 
-	@ApiProperty({
-		example: '+99876543210',
+  @ApiProperty({
+    example: '+99876543210',
   })
-	phoneNumber: string;
+  phoneNumber: string;
 
-	@ApiProperty({
-		example: 'Google Inc.',
+  @ApiProperty({
+    example: 'Google Inc.',
   })
-	company: string;
+  company: string;
 
-	@ApiProperty({
-		example: 'admin',
+  @ApiProperty({
+    example: 'admin',
   })
-	role: string;
+  role: string;
 }

@@ -1,32 +1,27 @@
-import { Attachment, Message, MessageContentType } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAttachmentDto {
-
-
-	@ApiProperty({
+  @ApiProperty({
     example: 'dp.gpg',
     description: 'Name of a file',
   })
-	name: string;
+  name: string;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 56799899,
     description: 'Size of a file',
   })
-	size: number;
+  size: number;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'image/png',
     description: 'type of a file',
   })
-	type: string;
+  type: string;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'X08',
     description: 'Buffer - file',
   })
-	file: Buffer;
-
- 
+  file: Buffer;
 }

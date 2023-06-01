@@ -1,6 +1,5 @@
 import { Password } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, Length } from '@nestjs/class-validator';
 
 export class PasswordEntity implements Password {
   @ApiProperty({

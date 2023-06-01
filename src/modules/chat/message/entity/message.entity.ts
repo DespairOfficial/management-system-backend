@@ -2,7 +2,6 @@ import { Message, MessageContentType } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MessageEntity implements Message {
-	
   @ApiProperty({
     example: '1',
     description: 'Id of user',
@@ -39,15 +38,15 @@ export class MessageEntity implements Message {
   })
   createdAt: Date;
 
-	@ApiProperty({
+  @ApiProperty({
     example: '[img1, img2]',
     description: 'Attachments files array',
   })
-	attachments: string[];
+  attachments: string[];
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'text',
     description: 'Text or image message',
   })
-	contentType: MessageContentType;
+  contentType: MessageContentType;
 }

@@ -54,6 +54,6 @@ export class ConversationController {
   })
   @Delete('mark-as-seen/:conversationId')
   async markAsSeen(@Param('conversationId', ParseIntPipe) conversationId: number, @Req() request: Request) {
-    return await this.conversationService.markAsSeen(request.user.id ,conversationId);
+    return await this.conversationService.markAsSeen(request.user.id, conversationId);
   }
 }

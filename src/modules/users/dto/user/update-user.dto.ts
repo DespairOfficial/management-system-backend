@@ -1,4 +1,4 @@
-import { OnlineStatus, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { IsBoolean, IsDate, IsEmail, IsOptional, IsString } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 

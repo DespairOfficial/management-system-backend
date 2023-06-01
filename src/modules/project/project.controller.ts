@@ -82,7 +82,7 @@ export class ProjectController {
     type: [ProjectEntity],
   })
   @Get()
-  async getAll(@Req() request: Request) {
+  async getAll() {
     try {
       return await this.projectService.findAll();
     } catch (error) {

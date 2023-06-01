@@ -1,4 +1,4 @@
-import { Attachment, Message, MessageContentType } from '@prisma/client';
+import { Attachment } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AttachmentEntity implements Attachment {

@@ -10,7 +10,7 @@ export class RegisterUserDto {
   @IsEmail({}, { message: 'Must be email' })
   readonly email: string;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'Denis Wolf',
     description: 'Fullanme of a user',
   })

@@ -13,7 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-	@ApiOperation({ summary: 'update self user info' })
+  @ApiOperation({ summary: 'update self user info' })
   @ApiOkResponse({
     type: UserInfoEntity,
   })

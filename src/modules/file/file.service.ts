@@ -7,7 +7,6 @@ import { ForbiddenException, Injectable, InternalServerErrorException } from '@n
 import { UploadsFolder } from '../../@types/folder';
 @Injectable()
 export class FileService {
-  constructor() {}
   public async updateMulterFile(
     file: Express.Multer.File,
     folder: UploadsFolder,

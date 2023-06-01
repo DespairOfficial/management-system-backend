@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNumber, IsOptional, IsPhoneNumber, IsString, Length } from '@nestjs/class-validator';
+import { IsEmail, IsString } from '@nestjs/class-validator';
 import { User } from '@prisma/client';
 
 export class CreateUserDto implements Partial<User> {

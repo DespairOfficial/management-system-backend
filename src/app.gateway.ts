@@ -83,7 +83,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   ): Promise<Message | WsException | string> {
     const user = this.authGuard(client);
     if (user) {
-			
       const createdMessage = await this.messageService.create(user.id, payload);
       const room = this.getRoomNameForConversation(payload.conversationId);
       this.server.to(room).emit('message:new', createdMessage);
