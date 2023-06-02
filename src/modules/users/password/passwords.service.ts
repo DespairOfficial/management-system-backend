@@ -1,11 +1,11 @@
 import { PrismaService } from 'src/modules/database/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Password } from '@prisma/client';
+import { Password, User } from '@prisma/client';
 
 @Injectable()
 export class PasswordsService {
   constructor(private prismaService: PrismaService) {}
-  async create(userId: number, password: string): Promise<Password> {
+  async create(userId: User['id'], password: string): Promise<Password> {
     const passwordObject = await this.prismaService.password.create({
       data: {
         userId: userId,
@@ -15,7 +15,7 @@ export class PasswordsService {
     return passwordObject;
   }
 
-  async findOneByUserId(userId: number): Promise<Password> {
+  async findOneByUserId(userId: User['id']): Promise<Password> {
     return await this.prismaService.password.findUnique({
       where: {
         userId: userId,

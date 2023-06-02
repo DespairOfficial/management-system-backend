@@ -1,4 +1,4 @@
-import { Message, MessageContentType } from '@prisma/client';
+import { Message, MessageContentType, User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MessageEntity implements Message {
@@ -24,7 +24,7 @@ export class MessageEntity implements Message {
     example: 1,
     description: 'Author of a message ',
   })
-  senderId: number;
+  senderId: User['id'];
 
   @ApiProperty({
     example: 'We need to fire our backend developer',

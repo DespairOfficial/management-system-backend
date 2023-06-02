@@ -45,7 +45,7 @@ export class ConversationController {
   })
   @Get()
   async getForCurrentUser(@Req() request: Request) {
-    return await this.conversationService.findWhereUser(+request.user.id);
+    return await this.conversationService.findWhereUser(request.user.id);
   }
 
   @ApiOperation({ summary: 'Mark conversation as seen' })

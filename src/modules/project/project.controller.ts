@@ -35,7 +35,7 @@ export class ProjectController {
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto, @Req() request: Request) {
     try {
-      return await this.projectService.create(+request.user.id, createProjectDto);
+      return await this.projectService.create(request.user.id, createProjectDto);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -100,7 +100,7 @@ export class ProjectController {
   @Get('requestToJoin/:projectId')
   async requestToJoinTeam(@Req() request: Request, @Param('projectId') projectId: string) {
     try {
-      return await this.projectService.requestToJoinProject(+request.user.id, +projectId);
+      return await this.projectService.requestToJoinProject(request.user.id, +projectId);
     } catch (error) {
       throw new BadRequestException(REQUEST_WAS_SEND);
     }

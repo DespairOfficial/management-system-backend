@@ -1,11 +1,12 @@
 import { PrismaService } from '../../database/prisma.service';
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { VerifyEmailCodeDto } from './dto/verify-email-code.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class VerificationService {
   constructor(private prismaService: PrismaService) {}
-  async setEmailVerificationCodeToUser(userId: number, emailVerificationCode: string) {
+  async setEmailVerificationCodeToUser(userId: User['id'], emailVerificationCode: string) {
     await this.prismaService.verification.upsert({
       where: {
         userId,
@@ -19,7 +20,7 @@ export class VerificationService {
       },
     });
   }
-  async verifyEmailByCode(userId: number, verifyEmailCodeDto: VerifyEmailCodeDto) {
+  async verifyEmailByCode(userId: User['id'], verifyEmailCodeDto: VerifyEmailCodeDto) {
     const codeObject = await this.prismaService.user.findUnique({
       where: {
         id: userId,

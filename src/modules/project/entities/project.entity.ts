@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Project } from '@prisma/client';
+import { Project, User } from '@prisma/client';
 
 export class ProjectEntity implements Project {
   @ApiProperty({
@@ -12,7 +12,7 @@ export class ProjectEntity implements Project {
     example: 1,
     description: 'Id of an project creator',
   })
-  userId: number;
+  userId: User['id'];
 
   @ApiProperty({
     example: 'New cool project',

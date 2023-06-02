@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id                  Int                        @id @default(autoincrement())
+  id                  String                     @id @default(dbgenerated("uuid7()")) @db.Uuid
   email               String                     @unique
   name                String
   username            String
@@ -22,6 +22,8 @@ model User {
   phoneNumber         String?
   company             String?
   role                String?
+  about               String?
+  address             String?
   lastActivity        DateTime?
   status              OnlineStatus               @default(offline)
   session             Session[]
@@ -35,24 +37,25 @@ model User {
 
   contacts        Contacts[] @relation(name: "contacts")
   whereInContacts Contacts[] @relation(name: "incontacts")
+  Message         Message[]
 }
 
 model Verification {
-  userId                Int     @unique
+  userId                String  @unique @db.Uuid
   user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   emailVerificationCode String?
   forgotPasswordCode    String?
 }
 
 model Password {
-  userId   Int    @unique
+  userId   String @unique @db.Uuid
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   password String
 }
 
 model Session {
   id           Int      @id @default(autoincrement())
-  userId       Int
+  userId       String @db.Uuid
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   refreshToken String   @unique
   fingerprint  String   @unique
@@ -63,7 +66,7 @@ model Session {
 
 model Project {
   id                Int                @id @default(autoincrement())
-  userId            Int
+  userId            String @db.Uuid
   creator           User               @relation(name: "Creator of a project", fields: [userId], references: [id])
   name              String
   description       String
@@ -76,7 +79,7 @@ model Project {
 }
 
 model RequestToProject {
-  userId    Int
+  userId    String @db.Uuid
   user      User     @relation(fields: [userId], references: [id])
   projectId Int
   project   Project  @relation(fields: [projectId], references: [id])
@@ -86,7 +89,7 @@ model RequestToProject {
 }
 
 model UserOnProject {
-  userId    Int
+  userId    String @db.Uuid
   user      User     @relation(fields: [userId], references: [id])
   projectId Int
   project   Project  @relation(fields: [projectId], references: [id])
@@ -99,7 +102,8 @@ model Message {
   id             Int                @id @default(autoincrement())
   conversationId Int
   conversation   Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  senderId       Int
+  senderId       String @db.Uuid
+  sender         User               @relation(fields: [senderId], references: [id])
   body           String
   attachments    Attachment[]
   contentType    MessageContentType @default(text)
@@ -131,7 +135,7 @@ model Conversation {
 model UserOnConversation {
   conversationId Int
   conversation   Conversation @relation(fields: [conversationId], references: [id])
-  userId         Int
+  userId         String @db.Uuid
   user           User         @relation(fields: [userId], references: [id])
 
   @@id([conversationId, userId])
@@ -140,17 +144,17 @@ model UserOnConversation {
 model UserOnUnseenConversation {
   conversationId Int
   conversation   Conversation @relation(fields: [conversationId], references: [id])
-  userId         Int
+  userId         String @db.Uuid
   user           User         @relation(fields: [userId], references: [id])
 
   @@id([conversationId, userId])
 }
 
 model Contacts {
-  userId    Int
-  user      User @relation(name: "contacts", fields: [userId], references: [id])
-  contactId Int
-  contact   User @relation(name: "incontacts", fields: [contactId], references: [id])
+  userId    String @db.Uuid
+  user      User   @relation(name: "contacts", fields: [userId], references: [id])
+  contactId String @db.Uuid
+  contact   User   @relation(name: "incontacts", fields: [contactId], references: [id])
 
   @@id([userId, contactId])
 }

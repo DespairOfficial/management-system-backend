@@ -1,3 +1,4 @@
+import { UsersService } from './../users/users.service';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import AuthResult from 'src/interfaces/AuthResult.interface';
 import { ValidateCustomHeadersDto } from '../users/dto/session/validate-custom-headers.dto';
@@ -18,7 +19,11 @@ import { refreshCookieOptions } from 'src/config/cookieOptions';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, private tokenService: TokenService) {}
+  constructor(
+    private authService: AuthService,
+    private tokenService: TokenService,
+    private usersService: UsersService,
+  ) {}
 
   @ApiOperation({ summary: 'Log in' })
   @ApiResponse({
@@ -112,7 +117,8 @@ export class AuthController {
   @Get('init')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Returns user instanse' })
-  async sendVerCode(@Req() request: Request) {
-    return request.user;
+  async init(@Req() request: Request) {
+		const user = await this.usersService.findOne(request.user.id)
+    return user
   }
 }

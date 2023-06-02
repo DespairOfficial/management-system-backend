@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
@@ -13,7 +14,7 @@ export class ConversationService {
     });
   }
 
-  async findWhereUser(userId: number) {
+  async findWhereUser(userId: User['id']) {
     const conversations = await this.prismaService.conversation.findMany({
       where: {
         participants: {
@@ -77,7 +78,7 @@ export class ConversationService {
     });
   }
 
-  async getUserOnConversation(userId: number) {
+  async getUserOnConversation(userId: User['id']) {
     return this.prismaService.userOnConversation.findMany({
       where: {
         userId,
@@ -85,7 +86,7 @@ export class ConversationService {
     });
   }
 
-  async findByUser(userId: number) {
+  async findByUser(userId: User['id']) {
     return this.prismaService.conversation.findMany({
       where: {
         participants: {
@@ -97,7 +98,7 @@ export class ConversationService {
     });
   }
 
-  async markAsSeen(userId: number, conversationId: number) {
+  async markAsSeen(userId: User['id'], conversationId: number) {
     const candidate = await this.prismaService.userOnUnseenConversation.findFirst({
       where: {
         conversationId,

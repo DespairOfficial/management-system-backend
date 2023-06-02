@@ -1,4 +1,4 @@
-import { Password } from '@prisma/client';
+import { Password, User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PasswordEntity implements Password {
@@ -6,7 +6,7 @@ export class PasswordEntity implements Password {
     example: '2',
     description: 'Id of a user',
   })
-  userId: number;
+  userId: User['id'];
 
   @ApiProperty({
     example: 'asdf_1s!@41$#afafg9',

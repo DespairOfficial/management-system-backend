@@ -135,19 +135,20 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   // обратите внимание на структуру объекта `handshake`
   async handleConnection(client: Socket, ...args: any[]) {
     const user = this.authGuard(client);
-    if (!user) {
-      client.disconnect();
+
+    if (user) {
+      const userId = user.id;
+      const socketId = client.id;
+      users[socketId] = userId;
+      const conversations = await this.conversationService.getUserOnConversation(user.id);
+      const rooms = conversations.map((item) => {
+        return this.getRoomNameForConversation(item.conversationId);
+      });
+      client.join(rooms);
+      // передаем информацию всем клиентам, кроме текущего
+      client.broadcast.emit('user:connected', userId);
     }
-    const userId = user.id;
-    const socketId = client.id;
-    users[socketId] = userId;
-    const conversations = await this.conversationService.getUserOnConversation(+user.id);
-    const rooms = conversations.map((item) => {
-      return this.getRoomNameForConversation(item.conversationId);
-    });
-    client.join(rooms);
-    // передаем информацию всем клиентам, кроме текущего
-    client.broadcast.emit('user:connected', userId);
+    client.disconnect();
   }
 
   handleDisconnect(client: Socket) {

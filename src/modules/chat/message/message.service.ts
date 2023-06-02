@@ -3,6 +3,7 @@ import { FileService } from './../../file/file.service';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class MessageService {
@@ -18,7 +19,7 @@ export class MessageService {
   }
 
   // создание сообщения
-  async create(userId: number, createMessageDto: CreateMessageDto) {
+  async create(userId: User['id'], createMessageDto: CreateMessageDto) {
     const { attachments, ...createDto } = createMessageDto;
 
     const attachmentObjects: Pick<AttachmentEntity, 'name' | 'type' | 'size' | 'path'>[] = [];

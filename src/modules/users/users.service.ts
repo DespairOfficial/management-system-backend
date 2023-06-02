@@ -20,12 +20,16 @@ export class UsersService {
     return user;
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: User['id']): Promise<User> {
     return await this.prismaService.user.findUnique({
       where: {
         id: id,
       },
     });
+  }
+
+  async findAll(): Promise<User[]> {
+    return await this.prismaService.user.findMany();
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -36,7 +40,7 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto, image: Express.Multer.File): Promise<User> {
+  async update(id: User['id'], updateUserDto: UpdateUserDto, image: Express.Multer.File): Promise<User> {
     const userBeforeUpdate = await this.prismaService.user.findFirstOrThrow({
       where: { id },
     });
@@ -52,7 +56,7 @@ export class UsersService {
     });
   }
 
-  async remove(id: number): Promise<User> {
+  async remove(id: User['id']): Promise<User> {
     return await this.prismaService.user.delete({
       where: {
         id: id,

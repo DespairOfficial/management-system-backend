@@ -3,11 +3,12 @@ import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-proj
 import { CreateProjectDto } from './dto/create-project.dto';
 import { PrismaService } from '../database/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class ProjectService {
   constructor(private readonly prismaService: PrismaService) {}
-  async create(userId: number, createProjectDto: CreateProjectDto) {
+  async create(userId: User['id'], createProjectDto: CreateProjectDto) {
     return await this.prismaService.project.create({
       data: { ...createProjectDto, userId },
     });
@@ -42,7 +43,7 @@ export class ProjectService {
     });
   }
 
-  async requestToJoinProject(userId: number, projectId: number) {
+  async requestToJoinProject(userId: User['id'], projectId: number) {
     return await this.prismaService.requestToProject.create({
       data: {
         userId,

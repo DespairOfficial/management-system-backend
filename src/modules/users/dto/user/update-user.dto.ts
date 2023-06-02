@@ -75,4 +75,14 @@ export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActi
     example: 'admin',
   })
   role: string;
+
+  @ApiProperty({
+    example: 'developer',
+  })
+  about: string;
+
+  @ApiProperty({
+    example: 'USSR, Moskov, Lenin, 17',
+  })
+  address: string;
 }

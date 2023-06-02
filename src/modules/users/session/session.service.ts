@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Session } from '@prisma/client';
+import { Session, User } from '@prisma/client';
 import { PrismaService } from 'src/modules/database/prisma.service';
 import { Token } from 'src/interfaces/Token.interface';
 import { CreateSessionDto } from '../dto/session/create-session.dto';
@@ -44,7 +44,7 @@ export class SessionService {
     return result;
   }
 
-  async create(userId: number, createSessionDto: CreateSessionDto): Promise<Session> {
+  async create(userId: User['id'], createSessionDto: CreateSessionDto): Promise<Session> {
     const result = await this.prismaService.session.create({
       data: {
         userId,
@@ -54,7 +54,7 @@ export class SessionService {
     return result;
   }
 
-  async upsertSessionByFingerPrint(userId: number, createSessionDto: CreateSessionDto): Promise<Session> {
+  async upsertSessionByFingerPrint(userId: User['id'], createSessionDto: CreateSessionDto): Promise<Session> {
     const result = await this.prismaService.session.upsert({
       where: {
         fingerprint: createSessionDto.fingerprint,

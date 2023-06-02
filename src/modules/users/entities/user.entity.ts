@@ -4,10 +4,10 @@ import { PasswordEntity } from './password.enitity';
 
 export class UserEntity implements User {
   @ApiProperty({
-    example: '1',
+    example: '01887b7e-c553-765c-94c2-16bef2666fdf',
     description: 'Id of user',
   })
-  id: number;
+  id: string;
 
   @ApiProperty({
     example: 'user@mail.com',
@@ -87,4 +87,14 @@ export class UserEntity implements User {
     example: 'admin',
   })
   role: string;
+
+  @ApiProperty({
+    example: 'developer',
+  })
+  about: string;
+
+  @ApiProperty({
+    example: 'USSR, Moskov, Lenin, 17',
+  })
+  address: string;
 }
