@@ -10,11 +10,10 @@ export class ValidationPipe implements PipeTransform {
     let transformerOptions: ClassTransformOptions = {};
     let validatorOptions: ValidatorOptions = {};
     console.log(metadata);
-    if (metadata.type != 'custom') {
-      transformerOptions = { enableImplicitConversion: true };
+    if (metadata.type !== 'custom') {
       validatorOptions = { forbidNonWhitelisted: true, whitelist: true };
     }
-    if (typeof value != 'object') {
+    if (typeof value !== 'object') {
       return value;
     }
     const obj = plainToClass(metadata.metatype, value, transformerOptions);

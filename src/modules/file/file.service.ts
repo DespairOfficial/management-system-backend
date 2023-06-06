@@ -2,6 +2,7 @@ import { writeFile, rm } from 'fs/promises';
 import { DEVELOPMENT_FILES, ERROR_SAVING_FILE } from './../../config/constants';
 import { v4 as uuidv4 } from 'uuid';
 import { resolve, join } from 'path';
+import { existsSync } from 'fs';
 import { UPLOADS_PATH } from '../../config/paths';
 import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UploadsFolder } from '../../@types/folder';
@@ -14,8 +15,8 @@ export class FileService {
     isSettingNull = false,
   ) {
     let resultPathName: string | null;
-    if (file && process.env.NODE_ENV == 'development') {
-      throw new ForbiddenException(DEVELOPMENT_FILES);
+    if (file && process.env.NODE_ENV === 'development') {
+      // throw new ForbiddenException(DEVELOPMENT_FILES);
     }
     if (isSettingNull) {
       if (oldFilePathName) {
@@ -52,7 +53,7 @@ export class FileService {
     setFileToNull = false,
   ) {
     let resultPathName: string | null;
-    if (buffer && process.env.NODE_ENV == 'development') {
+    if (buffer && process.env.NODE_ENV === 'development') {
       // throw new ForbiddenException(DEVELOPMENT_FILES);
     }
     if (setFileToNull) {
@@ -85,8 +86,10 @@ export class FileService {
     }
   }
   async delete(pathToFile: string) {
-    try {
-      await rm(pathToFile);
+		try {
+      if (existsSync(pathToFile)) {
+        await rm(pathToFile);
+      }
     } catch (error) {
       throw error;
     }

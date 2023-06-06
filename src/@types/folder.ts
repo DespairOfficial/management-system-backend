@@ -1,1 +1,1 @@
-export type UploadsFolder = 'attachments' | 'users';
+export type UploadsFolder = 'attachments' | 'users' | 'shared';

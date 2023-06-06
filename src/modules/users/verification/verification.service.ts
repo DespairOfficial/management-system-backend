@@ -37,7 +37,7 @@ export class VerificationService {
     if (!codeObject) {
       throw new InternalServerErrorException('User not found');
     }
-    if (codeObject.verification.emailVerificationCode == verifyEmailCodeDto.code) {
+    if (codeObject.verification.emailVerificationCode === verifyEmailCodeDto.code) {
       await this.prismaService.user.update({
         where: {
           id: userId,
@@ -79,7 +79,7 @@ export class VerificationService {
     if (!forgotPasswordCodeInDB.forgotPasswordCode) {
       throw new BadRequestException('You did not ask for restore yet');
     }
-    if (forgotPasswordCodeInDB.forgotPasswordCode == forgotPasswordCode) {
+    if (forgotPasswordCodeInDB.forgotPasswordCode === forgotPasswordCode) {
       await this.prismaService.verification.update({
         where: {
           userId: user.id,

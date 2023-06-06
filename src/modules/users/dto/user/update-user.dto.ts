@@ -1,15 +1,16 @@
 import { User } from '@prisma/client';
-import { IsBoolean, IsDate, IsEmail, IsOptional, IsString } from '@nestjs/class-validator';
+import { IsBoolean, IsDate, IsOptional, IsString } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from '@nestjs/class-transformer';
 
-export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActivity' | 'status'> {
-  @ApiProperty({
-    example: 'user@mail.com',
-    description: 'Email of user',
-  })
-  @IsEmail()
-  @IsString()
-  email: string;
+export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActivity' | 'status' | 'email' | 'role'> {
+  // @ApiProperty({
+  //   example: 'user@mail.com',
+  //   description: 'Email of user',
+  // })
+  // @IsEmail()
+  // @IsString()
+  // email: string;
 
   @ApiProperty({
     example: 'Denis Wolf',
@@ -29,6 +30,7 @@ export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActi
     example: 'true',
     description: 'Untolerate boolean gender picker: true for Male, false for Female',
   })
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   gender: boolean;
 
@@ -36,7 +38,6 @@ export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActi
     example: 'me.jpg',
     description: 'Photo of profile',
   })
-  @IsString()
   @IsOptional()
   image: string;
 
@@ -59,30 +60,37 @@ export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActi
   @ApiProperty({
     example: 'Canada',
   })
+  @IsString()
   country: string;
 
   @ApiProperty({
     example: '+99876543210',
   })
-  phoneNumber: string;
+  @IsString()
+  phone: string;
 
   @ApiProperty({
     example: 'Google Inc.',
   })
+  @IsString()
   company: string;
-
-  @ApiProperty({
-    example: 'admin',
-  })
-  role: string;
 
   @ApiProperty({
     example: 'developer',
   })
+  @IsString()
   about: string;
 
   @ApiProperty({
     example: 'USSR, Moskov, Lenin, 17',
   })
+  @IsString()
   address: string;
+
+  @ApiProperty({
+    example: 'Is profile public',
+  })
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  isPublic: boolean;
 }

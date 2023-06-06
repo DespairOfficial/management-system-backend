@@ -17,9 +17,10 @@ model User {
   username            String
   gender              Boolean                    @default(true)
   isVerified          Boolean                    @default(false)
+  isPublic            Boolean                    @default(true)
   image               String?
   country             String?
-  phoneNumber         String?
+  phone               String?
   company             String?
   role                String?
   about               String?
@@ -35,9 +36,11 @@ model User {
   conversations       UserOnConversation[]
   unseenConversations UserOnUnseenConversation[]
 
-  contacts        Contacts[] @relation(name: "contacts")
-  whereInContacts Contacts[] @relation(name: "incontacts")
-  Message         Message[]
+  contacts         Contacts[]         @relation(name: "contacts")
+  whereInContacts  Contacts[]         @relation(name: "incontacts")
+  messages         Message[]
+  fileContributors FileContributors[]
+  sharedFiles      SharedFile[]
 }
 
 model Verification {
@@ -55,7 +58,7 @@ model Password {
 
 model Session {
   id           Int      @id @default(autoincrement())
-  userId       String @db.Uuid
+  userId       String   @db.Uuid
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   refreshToken String   @unique
   fingerprint  String   @unique
@@ -66,7 +69,7 @@ model Session {
 
 model Project {
   id                Int                @id @default(autoincrement())
-  userId            String @db.Uuid
+  userId            String             @db.Uuid
   creator           User               @relation(name: "Creator of a project", fields: [userId], references: [id])
   name              String
   description       String
@@ -79,7 +82,7 @@ model Project {
 }
 
 model RequestToProject {
-  userId    String @db.Uuid
+  userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id])
   projectId Int
   project   Project  @relation(fields: [projectId], references: [id])
@@ -89,7 +92,7 @@ model RequestToProject {
 }
 
 model UserOnProject {
-  userId    String @db.Uuid
+  userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id])
   projectId Int
   project   Project  @relation(fields: [projectId], references: [id])
@@ -102,7 +105,7 @@ model Message {
   id             Int                @id @default(autoincrement())
   conversationId Int
   conversation   Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  senderId       String @db.Uuid
+  senderId       String             @db.Uuid
   sender         User               @relation(fields: [senderId], references: [id])
   body           String
   attachments    Attachment[]
@@ -135,7 +138,7 @@ model Conversation {
 model UserOnConversation {
   conversationId Int
   conversation   Conversation @relation(fields: [conversationId], references: [id])
-  userId         String @db.Uuid
+  userId         String       @db.Uuid
   user           User         @relation(fields: [userId], references: [id])
 
   @@id([conversationId, userId])
@@ -144,7 +147,7 @@ model UserOnConversation {
 model UserOnUnseenConversation {
   conversationId Int
   conversation   Conversation @relation(fields: [conversationId], references: [id])
-  userId         String @db.Uuid
+  userId         String       @db.Uuid
   user           User         @relation(fields: [userId], references: [id])
 
   @@id([conversationId, userId])
@@ -157,6 +160,44 @@ model Contacts {
   contact   User   @relation(name: "incontacts", fields: [contactId], references: [id])
 
   @@id([userId, contactId])
+}
+
+model SharedFile {
+  id     String @id @default(dbgenerated("uuid7()")) @db.Uuid
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+
+  name             String
+  size             Int
+  type             String
+  url              String
+  dateCreated      DateTime
+  dateModified     DateTime
+  fileContributors FileContributors[]
+  tags             TagsOnFile[]
+}
+
+model Tag {
+  name  String       @id
+  files TagsOnFile[]
+}
+
+model TagsOnFile {
+  fileId  String     @db.Uuid
+  file    SharedFile @relation(fields: [fileId], references: [id])
+  tagName String
+  tag     Tag        @relation(fields: [tagName], references: [name])
+
+  @@id([fileId, tagName])
+}
+
+model FileContributors {
+  fileId String     @db.Uuid
+  file   SharedFile @relation(fields: [fileId], references: [id])
+  userId String     @db.Uuid
+  user   User       @relation(fields: [userId], references: [id])
+
+  @@id([fileId, userId])
 }
 
 enum ConversationType {

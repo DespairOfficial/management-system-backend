@@ -9,17 +9,20 @@ import { ConversationModule } from './modules/chat/conversation/conversation.mod
 import { MessageModule } from './modules/chat/message/message.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { SharedModule } from './modules/shared/shared.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     AuthModule,
     MailModule,
+    SharedModule,
     ProjectModule,
     ConversationModule,
     MessageModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'static', 'uploads'), // <-- path to the static files
+      serveRoot: '/static/uploads/',
     }),
   ],
   controllers: [],

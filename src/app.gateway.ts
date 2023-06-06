@@ -82,6 +82,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     @ConnectedSocket() client: Socket,
   ): Promise<Message | WsException | string> {
     const user = this.authGuard(client);
+
     if (user) {
       const createdMessage = await this.messageService.create(user.id, payload);
       const room = this.getRoomNameForConversation(payload.conversationId);
@@ -144,11 +145,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const rooms = conversations.map((item) => {
         return this.getRoomNameForConversation(item.conversationId);
       });
+
       client.join(rooms);
       // передаем информацию всем клиентам, кроме текущего
       client.broadcast.emit('user:connected', userId);
+    } else {
+      client.disconnect();
     }
-    client.disconnect();
   }
 
   handleDisconnect(client: Socket) {

@@ -76,7 +76,7 @@ export class UserEntity implements User {
   @ApiProperty({
     example: '+99876543210',
   })
-  phoneNumber: string;
+  phone: string;
 
   @ApiProperty({
     example: 'Google Inc.',
@@ -97,4 +97,9 @@ export class UserEntity implements User {
     example: 'USSR, Moskov, Lenin, 17',
   })
   address: string;
+
+	@ApiProperty({
+    example: 'Is profile public',
+  })
+  isPublic: boolean;
 }
