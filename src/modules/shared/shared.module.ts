@@ -5,10 +5,11 @@ import { SharedController } from './shared.controller';
 import { DatabaseModule } from '../database/database.module';
 import { Module } from '@nestjs/common';
 import { SharedService } from './shared.service';
+import { ContributorsService } from './contributors/contributors.service';
 
 @Module({
   controllers: [SharedController, TagsController],
-  providers: [SharedService, TagsServcie],
+  providers: [SharedService, TagsServcie, ContributorsService],
   imports: [DatabaseModule, JwtModule],
   exports: [],
 })
