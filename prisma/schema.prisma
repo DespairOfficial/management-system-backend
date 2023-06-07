@@ -41,6 +41,7 @@ model User {
   messages         Message[]
   fileContributors FileContributors[]
   sharedFiles      SharedFile[]
+  calendarEvent    CalendarEvent[]
 }
 
 model Verification {
@@ -197,7 +198,20 @@ model FileContributors {
   userId     String               @db.Uuid
   user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   permission SharedFilePermission @default(view)
+
   @@id([fileId, userId])
+}
+
+model CalendarEvent {
+  id          String   @id @default(dbgenerated("uuid7()")) @db.Uuid
+  userId      String   @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  color       String
+  description String
+  start       DateTime
+  end         DateTime
+  title       String
+  allDay      Boolean
 }
 
 enum ConversationType {

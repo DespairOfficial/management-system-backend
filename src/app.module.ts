@@ -10,6 +10,7 @@ import { MessageModule } from './modules/chat/message/message.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SharedModule } from './modules/shared/shared.module';
+import { CalendarEventsModule } from './modules/calendar-events/calendar-events.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SharedModule } from './modules/shared/shared.module';
       rootPath: join(__dirname, '..', 'static', 'uploads'), // <-- path to the static files
       serveRoot: '/static/uploads/',
     }),
+    CalendarEventsModule,
   ],
   controllers: [],
   providers: [AppGateway],
