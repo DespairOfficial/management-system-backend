@@ -42,6 +42,7 @@ model User {
   fileContributors FileContributors[]
   sharedFiles      SharedFile[]
   calendarEvent    CalendarEvent[]
+  KanbanCard       KanbanCard[]
 }
 
 model Verification {
@@ -80,6 +81,7 @@ model Project {
   participants      UserOnProject[]
   requestsToProject RequestToProject[]
   conversation      Conversation[]
+  kanbanBoard       KanbanBoard[]
 }
 
 model RequestToProject {
@@ -212,6 +214,60 @@ model CalendarEvent {
   end         DateTime
   title       String
   allDay      Boolean
+}
+
+model KanbanBoard {
+  id        String  @id @default(dbgenerated("uuid7()")) @db.Uuid
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  cards       KanbanCard[]
+  columns     KanbanColumn[]
+  columnOrder String[]
+}
+
+model KanbanCard {
+  id          String               @id @default(dbgenerated("uuid7()")) @db.Uuid
+  name        String
+  description String?
+  assigneeId  String               @db.Uuid
+  assignee    User                 @relation(fields: [assigneeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  due         DateTime[]
+  attachments String[]
+  comments    KanbanComment[]
+  completed   Boolean
+  boardId     String               @db.Uuid
+  board       KanbanBoard          @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  column      KanbanCardOnColumn[]
+}
+
+model KanbanComment {
+  id          String             @id @default(dbgenerated("uuid7()")) @db.Uuid
+  image       String
+  name        String
+  createdAt   DateTime
+  messageType MessageContentType
+  message     String
+  cardId      String             @db.Uuid
+  card        KanbanCard         @relation(fields: [cardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model KanbanColumn {
+  id      String               @id @default(dbgenerated("uuid7()")) @db.Uuid
+  name    String
+  boardId String               @db.Uuid
+  board   KanbanBoard          @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cards   KanbanCardOnColumn[]
+}
+
+model KanbanCardOnColumn {
+  cardId String     @db.Uuid
+  card   KanbanCard @relation(fields: [cardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  columnId String       @db.Uuid
+  column   KanbanColumn @relation(fields: [columnId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([cardId, columnId])
 }
 
 enum ConversationType {
