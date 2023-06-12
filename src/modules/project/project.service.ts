@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import { FileService } from './../file/file.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-project.dto';
@@ -10,7 +11,7 @@ import { User } from '@prisma/client';
 export class ProjectService {
   constructor(private readonly prismaService: PrismaService, private readonly fileService: FileService) {}
   async create(userId: User['id'], createProjectDto: CreateProjectDto, image: Express.Multer.File) {
-    const filename = await this.fileService.updateMulterFile(image, 'users');
+    const filename = await this.fileService.updateMulterFile(image, 'projects');
     return await this.prismaService.project.create({
       data: { ...createProjectDto, userId, image: filename },
     });
@@ -18,6 +19,14 @@ export class ProjectService {
 
   async findAll() {
     return await this.prismaService.project.findMany();
+  }
+
+  async findAllMy(userId: User['id']) {
+    return await this.prismaService.project.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
   async findOne(id: string) {
@@ -28,9 +37,14 @@ export class ProjectService {
     });
   }
 
-  async update(id: string, updateProjectDto: UpdateProjectDto) {
+  async update(id: string, updateProjectDto: UpdateProjectDto, image: Express.Multer.File) {
+    const projectBeforeUpdate = await this.prismaService.user.findFirstOrThrow({
+      where: { id },
+    });
+
+    const filename = await this.fileService.updateMulterFile(image, 'projects', projectBeforeUpdate.image);
     return await this.prismaService.project.update({
-      data: updateProjectDto,
+      data: { ...updateProjectDto, image: filename },
       where: {
         id,
       },
@@ -38,6 +52,15 @@ export class ProjectService {
   }
 
   async delete(id: string) {
+    const project = await this.prismaService.project.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    if (project.image && existsSync(project.image)) {
+      this.fileService.deleteFile(project.image);
+    }
     return await this.prismaService.project.delete({
       where: {
         id,

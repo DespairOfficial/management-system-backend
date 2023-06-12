@@ -3,13 +3,13 @@ import { Project, User } from '@prisma/client';
 
 export class ProjectEntity implements Project {
   @ApiProperty({
-    example: 1,
+    example: '01887b7e-c553-765c-94c2-16bef2666fdf',
     description: 'Id of a project',
   })
-  id: number;
+  id: string;
 
   @ApiProperty({
-    example: 1,
+    example: '01887b7e-c553-765c-94c2-16bef2666fdf',
     description: 'Id of an project creator',
   })
   userId: User['id'];

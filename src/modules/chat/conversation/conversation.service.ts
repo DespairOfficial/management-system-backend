@@ -6,13 +6,23 @@ import { PrismaService } from '../../database/prisma.service';
 export class ConversationService {
   constructor(private prismaService: PrismaService) {}
 
-  async findByProjectId(projectId: number) {
+  async findByProjectId(projectId: string) {
     return await this.prismaService.conversation.findFirstOrThrow({
       where: {
         projectId,
       },
     });
   }
+
+  async upsertByUserId(userId: User['id'], contactId: User['id']) {
+		return await this.prismaService.userOnConversation.findUnique({
+			where:{
+				conversationId_userId:{
+					userId: userId
+				}
+			}
+		})
+	}
 
   async findWhereUser(userId: User['id']) {
     const conversations = await this.prismaService.conversation.findMany({

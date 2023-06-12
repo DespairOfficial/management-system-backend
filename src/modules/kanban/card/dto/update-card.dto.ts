@@ -2,8 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { KanbanCard } from '@prisma/client';
 
 export class UpdateCardDto implements Omit<KanbanCard, 'id' | 'attachments'> {
-
-
   @ApiProperty({
     example: 'Need to do smth',
   })

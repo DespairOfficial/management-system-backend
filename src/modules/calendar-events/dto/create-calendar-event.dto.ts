@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CalendarEvent } from '@prisma/client';
 
 export class CreateCalendarEventDto implements Omit<CalendarEvent, 'id' | 'userId'> {
-
   @ApiProperty({
     example: '#949494',
   })

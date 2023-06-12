@@ -7,7 +7,7 @@ import { ValidationExeption } from '../exeptions/validaiton.exeption';
 @Injectable()
 export class ValidationPipe implements PipeTransform {
   async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
-    let transformerOptions: ClassTransformOptions = {};
+    const transformerOptions: ClassTransformOptions = {};
     let validatorOptions: ValidatorOptions = {};
     console.log(metadata);
     if (metadata.type !== 'custom') {

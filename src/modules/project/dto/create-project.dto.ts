@@ -16,6 +16,7 @@ export class CreateProjectDto implements Partial<Project> {
     description: 'budget in dollars',
   })
   @IsNumber()
+  @Type(() => Number)
   budget: number;
 
   @ApiProperty({
@@ -32,11 +33,11 @@ export class CreateProjectDto implements Partial<Project> {
   @IsString()
   status: string;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'projects/sauodf-asdg-asdf-img.jpg',
     description: 'Image of a project',
   })
-	@IsOptional()
+  @IsOptional()
   image: string;
 
   @ApiProperty({

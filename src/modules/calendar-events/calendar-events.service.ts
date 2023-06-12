@@ -11,7 +11,7 @@ export class CalendarEventsService {
 
   async create(userId: User['id'], createCalendarEventDto: CreateCalendarEventDto) {
     return await this.calendarEventsRepository.create({
-      data: {...createCalendarEventDto, userId},
+      data: { ...createCalendarEventDto, userId },
     });
   }
 
@@ -32,7 +32,7 @@ export class CalendarEventsService {
       where: {
         id,
       },
-      data: {...updateCalendarEventDto, userId},
+      data: { ...updateCalendarEventDto, userId },
     });
   }
 

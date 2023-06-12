@@ -98,7 +98,7 @@ export class UserEntity implements User {
   })
   address: string;
 
-	@ApiProperty({
+  @ApiProperty({
     example: 'Is profile public',
   })
   isPublic: boolean;

@@ -9,10 +9,10 @@ export class BoardEntity implements KanbanBoard {
   id: string;
 
   @ApiProperty({
-    example: 2,
+    example: '01887b7e-c553-765c-94c2-16bef2666fdf',
     description: 'Id of a project',
   })
-  projectId: number;
+  projectId: string;
 
   @ApiProperty({
     example: ['ds', 'sadf', 'sdf'],

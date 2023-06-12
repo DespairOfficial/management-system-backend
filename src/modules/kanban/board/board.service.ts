@@ -30,7 +30,7 @@ export class BoardService {
         cards: {
           include: {
             assignees: true,
-						comments: true
+            comments: true,
           },
         },
       },

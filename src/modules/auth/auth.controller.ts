@@ -118,7 +118,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Returns user instanse' })
   async init(@Req() request: Request) {
-		const user = await this.usersService.findOne(request.user.id)
-    return user
+    const user = await this.usersService.findOne(request.user.id);
+    return user;
   }
 }

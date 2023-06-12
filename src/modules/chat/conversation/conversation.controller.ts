@@ -15,7 +15,7 @@ export class ConversationController {
     type: ConversationEntity,
   })
   @Get('byProjectId/:projectId')
-  async getByProjectId(@Param('projectId', ParseIntPipe) projectId: number) {
+  async getByProjectId(@Param('projectId', ParseIntPipe) projectId: string) {
     return await this.conversationService.findByProjectId(projectId);
   }
 

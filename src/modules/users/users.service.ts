@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import { FileService } from './../file/file.service';
 import { PrismaService } from 'src/modules/database/prisma.service';
 import { Injectable } from '@nestjs/common';
@@ -30,6 +31,25 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return await this.prismaService.user.findMany();
+  }
+
+  async findNotInContacts(userId: User['id']): Promise<User[]> {
+    return await this.prismaService.user.findMany({
+      where: {
+        id: {
+          not: {
+            equals: userId,
+          },
+        },
+        contacts: {
+          every: {
+            NOT: {
+              userId,
+            },
+          },
+        },
+      },
+    });
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -67,7 +87,17 @@ export class UsersService {
     });
   }
 
-  async remove(id: User['id']): Promise<User> {
+  async delete(id: User['id']): Promise<User> {
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+
+    if (user.image && existsSync(user.image)) {
+      this.fileService.deleteFile(user.image);
+    }
+
     return await this.prismaService.user.delete({
       where: {
         id: id,

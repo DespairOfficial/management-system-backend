@@ -5,16 +5,16 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ConversationEntity implements Conversation {
   @ApiProperty({
-    example: '1',
-    description: 'Id of user',
+    example: 1,
+    description: 'Id of a conversation',
   })
   id: number;
 
   @ApiProperty({
-    example: 1,
+    example: '01887b7e-c553-765c-94c2-16bef2666fdf',
     description: 'Id of a related project',
   })
-  projectId: number;
+  projectId: string;
 
   @ApiProperty({
     example: 1,

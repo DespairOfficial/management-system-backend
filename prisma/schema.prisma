@@ -18,9 +18,9 @@ model User {
   gender              Boolean                    @default(true)
   isVerified          Boolean                    @default(false)
   isPublic            Boolean                    @default(true)
-  imantry             String?
-  phoge               String?
-  coune               String?
+  image               String?
+  phone               String?
+  country             String?
   company             String?
   role                String?
   about               String?
@@ -131,8 +131,8 @@ model Attachment {
 
 model Conversation {
   id                       Int                        @id @default(autoincrement())
-  projectId                String                     @db.Uuid
-  project                  Project                    @relation(fields: [projectId], references: [id])
+  projectId                String?                    @db.Uuid
+  project                  Project?                   @relation(fields: [projectId], references: [id])
   messages                 Message[]
   participants             UserOnConversation[]
   type                     ConversationType           @default(GROUP)

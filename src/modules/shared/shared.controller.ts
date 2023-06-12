@@ -68,7 +68,7 @@ export class SharedController {
     return await this.contributorsService.addContributor(request.user.id, id, addContributorToFileDto);
   }
 
-	@ApiOperation({ summary: 'Remove contributor' })
+  @ApiOperation({ summary: 'Remove contributor' })
   @ApiCreatedResponse({
     type: SharedFileEntity,
   })

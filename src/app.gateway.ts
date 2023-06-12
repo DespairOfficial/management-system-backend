@@ -132,12 +132,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   //     this.server.emit('message:delete', removedMessage);
   // }
 
-  afterInit(server: Server) {
-    console.log('init');
-  }
+  afterInit(server: Server) {}
   // обратите внимание на структуру объекта `handshake`
   async handleConnection(client: Socket, ...args: any[]) {
     const user = this.authGuard(client);
+    console.log('USER:', user);
 
     if (user) {
       const userId = user.id;

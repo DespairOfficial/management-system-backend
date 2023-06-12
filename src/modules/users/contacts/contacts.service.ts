@@ -24,6 +24,7 @@ export class ContactsService {
 
   async add(userId: User['id'], addToContactsDto: AddToContactsDto) {
     const contactObjects = addToContactsDto.ids.map((item) => {
+			
       return {
         userId,
         contactId: item,

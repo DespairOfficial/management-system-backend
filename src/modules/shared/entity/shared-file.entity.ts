@@ -8,7 +8,7 @@ export class SharedFileEntity implements SharedFile {
   })
   id: string;
 
-	@ApiProperty({
+  @ApiProperty({
     example: '01887b7e-c553-765c-94c2-16bef2666fdf',
     description: 'Id of a creator',
   })

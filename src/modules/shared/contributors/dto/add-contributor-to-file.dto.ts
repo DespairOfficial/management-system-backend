@@ -6,7 +6,7 @@ export class AddContributorToFileDto {
     example: 'user@mail.com',
     description: 'email of a new contributor',
   })
-	@IsString()
-	@IsEmail()
-  contributorEmail: string
+  @IsString()
+  @IsEmail()
+  contributorEmail: string;
 }

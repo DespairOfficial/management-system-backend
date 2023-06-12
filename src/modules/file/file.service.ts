@@ -86,7 +86,7 @@ export class FileService {
     }
   }
   async delete(pathToFile: string) {
-		try {
+    try {
       if (existsSync(pathToFile)) {
         await rm(pathToFile);
       }

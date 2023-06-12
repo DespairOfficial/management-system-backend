@@ -11,7 +11,6 @@ import { ApiTags } from '@nestjs/swagger';
 export class KanbanController {
   constructor(private readonly kanbanService: KanbanService) {}
 
-	
   @Post()
   create(@Body() createKanbanDto: CreateKanbanDto) {
     return this.kanbanService.create(createKanbanDto);

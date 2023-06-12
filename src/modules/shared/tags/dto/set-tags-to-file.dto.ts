@@ -6,6 +6,6 @@ export class SetTagsToFileDto {
     example: ['Dev', 'Fix'],
     description: 'tags',
   })
-	@IsArray()
+  @IsArray()
   tags: string[];
 }

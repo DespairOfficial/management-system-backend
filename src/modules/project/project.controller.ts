@@ -55,14 +55,21 @@ export class ProjectController {
   @ApiOkResponse({
     type: ProjectEntity,
   })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto, @Req() request: Request) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateProjectDto: UpdateProjectDto,
+    @Req() request: Request,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
     const candidate = await this.projectService.findOne(id);
     if (request.user.id !== candidate.userId) {
       throw new ForbiddenException('You have no rights to do that!');
     }
     try {
-      return await this.projectService.update(id, updateProjectDto);
+      return await this.projectService.update(id, updateProjectDto, image);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -86,14 +93,15 @@ export class ProjectController {
     }
   }
 
-  @ApiOperation({ summary: 'Get all projects' })
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get all my projects' })
   @ApiOkResponse({
     type: [ProjectEntity],
   })
   @Get()
-  async getAll() {
+  async getAll(@Req() request: Request) {
     try {
-      return await this.projectService.findAll();
+      return await this.projectService.findAllMy(request.user.id);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
