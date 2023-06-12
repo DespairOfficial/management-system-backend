@@ -10,7 +10,7 @@ async function bootstrap() {
   // parsing cookies from request.headers.cookie
   // transforming it from string to Js object and exposing in request.cookies
   // or request.signedCookies when secret is provided
-  app.enableCors({ credentials: true, origin: true });
+  app.enableCors({ credentials: true, origin: 'http://localhost:8080' });
 
   app.use(cookieParser(process.env.COOKIES_SECRET));
 
