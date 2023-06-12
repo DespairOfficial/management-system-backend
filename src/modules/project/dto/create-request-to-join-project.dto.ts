@@ -1,4 +1,4 @@
-import { IsNumber } from '@nestjs/class-validator';
+import { IsNumber, IsString } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { RequestToProject, User } from '@prisma/client';
 
@@ -14,6 +14,6 @@ export class CreateRequestToJoinProjectDto implements Partial<RequestToProject> 
     example: 1,
     description: 'Id of an project',
   })
-  @IsNumber()
-  projectId?: number;
+  @IsString()
+  projectId?: string;
 }

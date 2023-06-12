@@ -1,3 +1,4 @@
+import { UsersModule } from 'src/modules/users/users.module';
 import { ProjectModule } from './modules/project/project.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
@@ -28,6 +29,7 @@ import { KanbanModule } from './modules/kanban/kanban.module';
     }),
     CalendarEventsModule,
     KanbanModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [AppGateway],

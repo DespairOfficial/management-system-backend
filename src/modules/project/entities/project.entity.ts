@@ -21,6 +21,12 @@ export class ProjectEntity implements Project {
   name: string;
 
   @ApiProperty({
+    example: 'projects/sauodf-asdg-asdf-img.jpg',
+    description: 'Image of a project',
+  })
+  image: string;
+
+  @ApiProperty({
     example: 'Very perspective startup to earn a lot of money',
     description: 'Description of an project',
   })

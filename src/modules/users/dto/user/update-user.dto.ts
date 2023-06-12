@@ -3,7 +3,7 @@ import { IsBoolean, IsDate, IsOptional, IsString } from '@nestjs/class-validator
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from '@nestjs/class-transformer';
 
-export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActivity' | 'status' | 'email' | 'role'> {
+export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActivity' | 'status' | 'email'> {
   // @ApiProperty({
   //   example: 'user@mail.com',
   //   description: 'Email of user',
@@ -25,6 +25,13 @@ export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActi
   })
   @IsString()
   username: string;
+
+  @ApiProperty({
+    example: 'ux designer',
+    description: 'Role of the user in the system',
+  })
+  @IsString()
+  role: string;
 
   @ApiProperty({
     example: 'true',

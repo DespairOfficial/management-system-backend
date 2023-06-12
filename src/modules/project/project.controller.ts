@@ -16,11 +16,14 @@ import {
   UseGuards,
   InternalServerErrorException,
   BadRequestException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Project')
 @Controller('project')
@@ -32,10 +35,16 @@ export class ProjectController {
   @ApiCreatedResponse({
     type: ProjectEntity,
   })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto, @Req() request: Request) {
+  async create(
+    @Body() createProjectDto: CreateProjectDto,
+    @Req() request: Request,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
     try {
-      return await this.projectService.create(request.user.id, createProjectDto);
+      return await this.projectService.create(request.user.id, createProjectDto, image);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -48,12 +57,12 @@ export class ProjectController {
   })
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto, @Req() request: Request) {
-    const candidate = await this.projectService.findOne(+id);
+    const candidate = await this.projectService.findOne(id);
     if (request.user.id !== candidate.userId) {
       throw new ForbiddenException('You have no rights to do that!');
     }
     try {
-      return await this.projectService.update(+id, updateProjectDto);
+      return await this.projectService.update(id, updateProjectDto);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -67,11 +76,11 @@ export class ProjectController {
   @Delete(':id')
   async delete(@Param('id') id: string, @Req() request: Request) {
     try {
-      const candidate = await this.projectService.findOne(+id);
+      const candidate = await this.projectService.findOne(id);
       if (request.user.id !== candidate.userId) {
         throw new ForbiddenException('You have no rights to do that!');
       }
-      return await this.projectService.delete(+id);
+      return await this.projectService.delete(id);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -100,7 +109,7 @@ export class ProjectController {
   @Get('requestToJoin/:projectId')
   async requestToJoinTeam(@Req() request: Request, @Param('projectId') projectId: string) {
     try {
-      return await this.projectService.requestToJoinProject(request.user.id, +projectId);
+      return await this.projectService.requestToJoinProject(request.user.id, projectId);
     } catch (error) {
       throw new BadRequestException(REQUEST_WAS_SEND);
     }

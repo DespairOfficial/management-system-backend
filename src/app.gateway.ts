@@ -1,3 +1,4 @@
+import { UsersService } from './modules/users/users.service';
 import { Conversation, Message } from '@prisma/client';
 import {
   ConnectedSocket,
@@ -17,7 +18,7 @@ import { UNAUTHORIZED } from './constants';
 import { CreateMessageDto } from './modules/chat/message/dto/create-message.dto';
 import { ConversationService } from './modules/chat/conversation/conversation.service';
 
-const users: Record<string, number> = {};
+const users: Record<string, string> = {};
 
 @WebSocketGateway({
   cors: {
@@ -32,6 +33,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   constructor(
     private readonly messageService: MessageService,
     private readonly conversationService: ConversationService,
+    private readonly usersService: UsersService,
   ) {}
 
   private getRoomNameForConversation = (conversationId: number) => {
@@ -146,6 +148,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         return this.getRoomNameForConversation(item.conversationId);
       });
 
+      this.usersService.setOnlineStatus(userId, 'online');
+
       client.join(rooms);
       // передаем информацию всем клиентам, кроме текущего
       client.broadcast.emit('user:connected', userId);
@@ -157,6 +161,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   handleDisconnect(client: Socket) {
     const socketId = client.id;
     const userId = users[socketId];
+    this.usersService.setOnlineStatus(userId, 'offline');
     delete users[socketId];
     client.broadcast.emit('user:disconnected', userId);
   }

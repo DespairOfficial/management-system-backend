@@ -3,7 +3,7 @@ import { PrismaService } from 'src/modules/database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/user/create-user.dto';
 import { UpdateUserDto } from './dto/user/update-user.dto';
-import { User } from '@prisma/client';
+import { OnlineStatus, User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +53,17 @@ export class UsersService {
         id: id,
       },
       data: { ...updateDto, image: filename },
+    });
+  }
+
+  async setOnlineStatus(id: User['id'], status: OnlineStatus) {
+    return await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
     });
   }
 

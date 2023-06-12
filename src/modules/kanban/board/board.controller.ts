@@ -1,9 +1,12 @@
+import { BoardEntity } from './entities/board.entity';
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 
-@Controller('board')
+@Controller('kanban/board')
+@ApiTags('KanbanBoard')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
@@ -17,18 +20,22 @@ export class BoardController {
     return this.boardService.findAll();
   }
 
+  @ApiOperation({ summary: 'Get kanban board' })
+  @ApiOkResponse({
+    type: BoardEntity,
+  })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.boardService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardService.update(+id, updateBoardDto);
+    return this.boardService.update(id, updateBoardDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.boardService.remove(+id);
+    return this.boardService.remove(id);
   }
 }

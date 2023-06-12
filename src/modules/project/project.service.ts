@@ -1,3 +1,4 @@
+import { FileService } from './../file/file.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-project.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -7,10 +8,11 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class ProjectService {
-  constructor(private readonly prismaService: PrismaService) {}
-  async create(userId: User['id'], createProjectDto: CreateProjectDto) {
+  constructor(private readonly prismaService: PrismaService, private readonly fileService: FileService) {}
+  async create(userId: User['id'], createProjectDto: CreateProjectDto, image: Express.Multer.File) {
+    const filename = await this.fileService.updateMulterFile(image, 'users');
     return await this.prismaService.project.create({
-      data: { ...createProjectDto, userId },
+      data: { ...createProjectDto, userId, image: filename },
     });
   }
 
@@ -18,7 +20,7 @@ export class ProjectService {
     return await this.prismaService.project.findMany();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this.prismaService.project.findFirst({
       where: {
         id,
@@ -26,7 +28,7 @@ export class ProjectService {
     });
   }
 
-  async update(id: number, updateProjectDto: UpdateProjectDto) {
+  async update(id: string, updateProjectDto: UpdateProjectDto) {
     return await this.prismaService.project.update({
       data: updateProjectDto,
       where: {
@@ -35,7 +37,7 @@ export class ProjectService {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return await this.prismaService.project.delete({
       where: {
         id,
@@ -43,7 +45,7 @@ export class ProjectService {
     });
   }
 
-  async requestToJoinProject(userId: User['id'], projectId: number) {
+  async requestToJoinProject(userId: User['id'], projectId: string) {
     return await this.prismaService.requestToProject.create({
       data: {
         userId,

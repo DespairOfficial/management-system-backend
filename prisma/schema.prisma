@@ -18,9 +18,9 @@ model User {
   gender              Boolean                    @default(true)
   isVerified          Boolean                    @default(false)
   isPublic            Boolean                    @default(true)
-  image               String?
-  country             String?
-  phone               String?
+  imantry             String?
+  phoge               String?
+  coune               String?
   company             String?
   role                String?
   about               String?
@@ -42,7 +42,7 @@ model User {
   fileContributors FileContributors[]
   sharedFiles      SharedFile[]
   calendarEvent    CalendarEvent[]
-  KanbanCard       KanbanCard[]
+  assigneeOnCard   AssigneeOnCard[]
 }
 
 model Verification {
@@ -70,11 +70,12 @@ model Session {
 }
 
 model Project {
-  id                Int                @id @default(autoincrement())
+  id                String             @id @default(dbgenerated("uuid7()")) @db.Uuid
   userId            String             @db.Uuid
   creator           User               @relation(name: "Creator of a project", fields: [userId], references: [id])
   name              String
   description       String
+  image             String
   budget            Int
   status            String
   startsAt          DateTime
@@ -87,7 +88,7 @@ model Project {
 model RequestToProject {
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId Int
+  projectId String   @db.Uuid
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime @default(now())
 
@@ -97,7 +98,7 @@ model RequestToProject {
 model UserOnProject {
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId Int
+  projectId String   @db.Uuid
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime @default(now())
 
@@ -130,7 +131,7 @@ model Attachment {
 
 model Conversation {
   id                       Int                        @id @default(autoincrement())
-  projectId                Int
+  projectId                String                     @db.Uuid
   project                  Project                    @relation(fields: [projectId], references: [id])
   messages                 Message[]
   participants             UserOnConversation[]
@@ -218,7 +219,7 @@ model CalendarEvent {
 
 model KanbanBoard {
   id        String  @id @default(dbgenerated("uuid7()")) @db.Uuid
-  projectId Int
+  projectId String  @db.Uuid
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   cards       KanbanCard[]
@@ -227,11 +228,9 @@ model KanbanBoard {
 }
 
 model KanbanCard {
-  id          String               @id @default(dbgenerated("uuid7()")) @db.Uuid
+  id          String               @id @db.Uuid
   name        String
   description String?
-  assigneeId  String               @db.Uuid
-  assignee    User                 @relation(fields: [assigneeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   due         DateTime[]
   attachments String[]
   comments    KanbanComment[]
@@ -239,6 +238,16 @@ model KanbanCard {
   boardId     String               @db.Uuid
   board       KanbanBoard          @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   column      KanbanCardOnColumn[]
+  assignees   AssigneeOnCard[]
+}
+
+model AssigneeOnCard {
+  assigneeId String     @db.Uuid
+  assignees  User       @relation(fields: [assigneeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cardId     String     @db.Uuid
+  card       KanbanCard @relation(fields: [cardId], references: [id])
+
+  @@id([cardId, assigneeId])
 }
 
 model KanbanComment {

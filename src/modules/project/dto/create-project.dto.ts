@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/class-transformer';
-import { IsISO8601, IsNumber, IsString } from '@nestjs/class-validator';
+import { IsISO8601, IsNumber, IsOptional, IsString } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Project } from '@prisma/client';
 
@@ -31,6 +31,13 @@ export class CreateProjectDto implements Partial<Project> {
   })
   @IsString()
   status: string;
+
+	@ApiProperty({
+    example: 'projects/sauodf-asdg-asdf-img.jpg',
+    description: 'Image of a project',
+  })
+	@IsOptional()
+  image: string;
 
   @ApiProperty({
     example: '2023-03-22T08:50:01.930Z',
