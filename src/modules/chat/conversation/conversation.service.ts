@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, Project } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class ConversationService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async findByProjectId(projectId: string) {
     return await this.prismaService.conversation.findFirstOrThrow({
@@ -14,15 +14,47 @@ export class ConversationService {
     });
   }
 
-  async upsertByUserId(userId: User['id'], contactId: User['id']) {
-		return await this.prismaService.userOnConversation.findUnique({
-			where:{
-				conversationId_userId:{
-					userId: userId
-				}
-			}
-		})
-	}
+  async createWithUserId(userId: User['id'], contactId: User['id']) {
+    const newConversation = await this.prismaService.conversation.create({
+      data: {
+        projectId: null,
+        type: 'ONE_TO_ONE',
+        participants: {
+          createMany: {
+            data: [{ userId }, { userId: contactId }],
+          },
+        },
+        userOnUnseenConversation: {
+          createMany: {
+            data: [{ userId }, { userId: contactId }],
+          },
+        },
+      },
+    });
+    return newConversation;
+  }
+
+  async createWithProjectId(userId: User['id'], projectId: Project['id']) {
+    const newConversation = await this.prismaService.conversation.create({
+      data: {
+        projectId,
+        type: 'GROUP',
+        participants: {
+          createMany: {
+            data: {
+              userId,
+            },
+          },
+        },
+        userOnUnseenConversation: {
+          createMany: {
+            data: [{ userId }],
+          },
+        },
+      },
+    });
+    return newConversation;
+  }
 
   async findWhereUser(userId: User['id']) {
     const conversations = await this.prismaService.conversation.findMany({

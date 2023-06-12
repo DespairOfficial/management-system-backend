@@ -10,11 +10,12 @@ import { PasswordsService } from './password/passwords.service';
 import { VerificationService } from './verification/verification.service';
 import { VerificationController } from './verification/verification.controller';
 import { FileModule } from '../file/file.module';
+import { ConversationModule } from '../chat/conversation/conversation.module';
 
 @Module({
   controllers: [UsersController, VerificationController, ContactsController],
   providers: [UsersService, SessionService, PasswordsService, VerificationService, ContactsService],
   exports: [UsersService, SessionService, PasswordsService, VerificationService],
-  imports: [DatabaseModule, JwtModule, FileModule],
+  imports: [DatabaseModule, JwtModule, FileModule, ConversationModule],
 })
 export class UsersModule {}

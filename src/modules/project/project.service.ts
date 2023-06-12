@@ -1,3 +1,4 @@
+import { ConversationService } from './../chat/conversation/conversation.service';
 import { existsSync } from 'fs';
 import { FileService } from './../file/file.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -9,12 +10,20 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class ProjectService {
-  constructor(private readonly prismaService: PrismaService, private readonly fileService: FileService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly fileService: FileService,
+    private readonly conversationService: ConversationService,
+  ) {}
   async create(userId: User['id'], createProjectDto: CreateProjectDto, image: Express.Multer.File) {
     const filename = await this.fileService.updateMulterFile(image, 'projects');
-    return await this.prismaService.project.create({
+    const project = await this.prismaService.project.create({
       data: { ...createProjectDto, userId, image: filename },
     });
+
+    await this.conversationService.createWithProjectId(userId, project.id);
+
+    return project;
   }
 
   async findAll() {

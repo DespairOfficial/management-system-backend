@@ -1,3 +1,4 @@
+import { ConversationService } from './../../chat/conversation/conversation.service';
 import { AddToContactsDto } from './dto/add-to-contacts.dto';
 import { PrismaService } from 'src/modules/database/prisma.service';
 import { Injectable } from '@nestjs/common';
@@ -5,7 +6,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class ContactsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService, private conversationService: ConversationService) {}
 
   private readonly contactsRepository = this.prismaService.contacts;
   async findMany(userId: User['id']) {
@@ -24,7 +25,7 @@ export class ContactsService {
 
   async add(userId: User['id'], addToContactsDto: AddToContactsDto) {
     const contactObjects = addToContactsDto.ids.map((item) => {
-			
+      this.conversationService.createWithUserId(userId, item);
       return {
         userId,
         contactId: item,

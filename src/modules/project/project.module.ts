@@ -1,3 +1,4 @@
+import { ConversationModule } from './../chat/conversation/conversation.module';
 import { FileModule } from './../file/file.module';
 import { ProjectService } from './project.service';
 import { DatabaseModule } from '../database/database.module';
@@ -8,6 +9,6 @@ import { ProjectController } from './project.controller';
 @Module({
   controllers: [ProjectController],
   providers: [ProjectService],
-  imports: [DatabaseModule, JwtModule, FileModule],
+  imports: [DatabaseModule, JwtModule, FileModule, ConversationModule],
 })
 export class ProjectModule {}
