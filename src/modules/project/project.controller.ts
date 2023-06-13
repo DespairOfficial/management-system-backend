@@ -107,6 +107,20 @@ export class ProjectController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get all invitations to me' })
+  @ApiOkResponse({
+    type: [ProjectEntity],
+  })
+  @Get('invitation')
+  async getAllInvitations(@Req() request: Request) {
+    try {
+      return await this.projectService.findAllInvitationsToMe(request.user.id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   @ApiOperation({ summary: 'Request to join project' })
   @ApiOkResponse({
     schema: {
@@ -114,32 +128,33 @@ export class ProjectController {
     },
   })
   @UseGuards(JwtAuthGuard)
-  @Get('requestToJoin/:projectId')
-  async requestToJoinTeam(@Req() request: Request, @Param('projectId') projectId: string) {
+  @Post('requestToJoin')
+  async requestToJoinTeam(
+    @Req() request: Request,
+    @Body() createRequestToJoinProjectDto: CreateRequestToJoinProjectDto,
+  ) {
+    const project = await this.projectService.findOne(createRequestToJoinProjectDto.projectId);
+    if (project.userId !== request.user.id) {
+      throw new ForbiddenException(NO_RIGHTS);
+    }
     try {
-      return await this.projectService.requestToJoinProject(request.user.id, projectId);
+      return await this.projectService.requestToJoinProject(createRequestToJoinProjectDto);
     } catch (error) {
       throw new BadRequestException(REQUEST_WAS_SEND);
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Accept request to join project' })
   @ApiOkResponse({
     schema: {
       example: { message: 'Request was accepted!' },
     },
   })
-  @Patch('acceptRequestToJoin')
-  async acceptRequestToJoinMyTeam(
-    @Req() request: Request,
-    @Body() createRequestToJoinProjectDto: CreateRequestToJoinProjectDto,
-  ) {
+  @Patch('join/:projectId')
+  async acceptRequestToJoin(@Req() request: Request, @Param('projectId') projectId: string) {
     try {
-      const project = await this.projectService.findOne(createRequestToJoinProjectDto.projectId);
-      if (project.userId !== request.user.id) {
-        throw new ForbiddenException(NO_RIGHTS);
-      }
-      await this.projectService.acceptRequestToJoinMyProject(createRequestToJoinProjectDto);
+      await this.projectService.acceptRequest(projectId, request.user.id);
       return { message: 'Request was accepted!' };
     } catch (error) {
       throw error;

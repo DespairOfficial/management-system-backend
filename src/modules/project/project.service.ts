@@ -6,7 +6,7 @@ import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-proj
 import { CreateProjectDto } from './dto/create-project.dto';
 import { PrismaService } from '../database/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, Project } from '@prisma/client';
 
 @Injectable()
 export class ProjectService {
@@ -35,6 +35,17 @@ export class ProjectService {
       where: {
         userId,
       },
+    });
+  }
+
+  async findAllInvitationsToMe(userId: User['id']) {
+    return await this.prismaService.requestToProject.findMany({
+      where: {
+        userId,
+      },
+			include:{
+				project: true
+			}
     });
   }
 
@@ -77,25 +88,37 @@ export class ProjectService {
     });
   }
 
-  async requestToJoinProject(userId: User['id'], projectId: string) {
+  async requestToJoinProject(createRequestToJoinProjectDto: CreateRequestToJoinProjectDto) {
     return await this.prismaService.requestToProject.create({
       data: {
-        userId,
-        projectId,
+        userId: createRequestToJoinProjectDto.userId,
+        projectId: createRequestToJoinProjectDto.projectId,
       },
     });
   }
-  async acceptRequestToJoinMyProject(createRequestToJoinProjectDto: CreateRequestToJoinProjectDto) {
+  async acceptRequest(projectId: Project['id'], userId: User['id']) {
+    await this.prismaService.requestToProject.findUniqueOrThrow({
+      where: {
+        userId_projectId: {
+          userId,
+          projectId,
+        },
+      },
+    });
     await this.prismaService.requestToProject.delete({
       where: {
         userId_projectId: {
-          userId: createRequestToJoinProjectDto.userId,
-          projectId: createRequestToJoinProjectDto.projectId,
+          userId,
+          projectId,
         },
       },
     });
     await this.prismaService.userOnProject.create({
-      data: { projectId: createRequestToJoinProjectDto.projectId, userId: createRequestToJoinProjectDto.userId },
+      data: { projectId, userId },
     });
+
+    const conversation = await this.conversationService.findByProjectId(projectId);
+
+    await this.conversationService.addToConversation(conversation.id, userId);
   }
 }

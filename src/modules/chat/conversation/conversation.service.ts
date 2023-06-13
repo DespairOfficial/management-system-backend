@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User, Project } from '@prisma/client';
+import { User, Project, Conversation } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
@@ -76,6 +76,7 @@ export class ConversationService {
             user: true,
           },
         },
+        project: true,
       },
     });
     return conversations.map((item) => {
@@ -102,6 +103,7 @@ export class ConversationService {
             user: true,
           },
         },
+        project: true,
       },
     });
     const participants = conversation.participants.map((item) => item.user);
@@ -137,6 +139,12 @@ export class ConversationService {
           },
         },
       },
+    });
+  }
+
+  async addToConversation(conversationId: Conversation['id'], userId: User['id']) {
+    return this.prismaService.userOnConversation.create({
+      data: { conversationId, userId },
     });
   }
 

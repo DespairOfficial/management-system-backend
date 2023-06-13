@@ -2,13 +2,7 @@ import { IsNumber, IsString } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { RequestToProject, User } from '@prisma/client';
 
-export class CreateRequestToJoinProjectDto implements Partial<RequestToProject> {
-  @ApiProperty({
-    example: 1,
-    description: 'Id of a user to join',
-  })
-  @IsNumber()
-  userId: User['id'];
+export class AcceptJoinProjectDto implements Partial<RequestToProject> {
 
   @ApiProperty({
     example: 1,
