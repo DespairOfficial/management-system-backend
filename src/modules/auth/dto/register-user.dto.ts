@@ -37,7 +37,7 @@ export class RegisterUserDto {
   })
   @IsString({ message: 'Must be string' })
   @Length(8, 24, {
-    message: 'Can not be shorter than 8 symbols',
+    message: 'Password shoud be from 8 to 24 symbols',
   })
   readonly password: string;
 }
