@@ -22,7 +22,7 @@ const users: Record<string, string> = {};
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:8080',
+    origin: process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://despair.srrlab.ru',
   },
 
   //   serveClient: false,
