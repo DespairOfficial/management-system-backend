@@ -31,6 +31,14 @@ export class ContactsService {
         contactId: item,
       };
     });
+
+    addToContactsDto.ids.forEach((item) => {
+      this.conversationService.createWithUserId(userId, item);
+      contactObjects.push({
+        userId: item,
+        contactId: userId,
+      });
+    });
     const contactsCount = await this.contactsRepository.createMany({
       data: contactObjects,
     });
