@@ -17,7 +17,7 @@ import { MessageService } from './modules/chat/message/message.service';
 import { UNAUTHORIZED } from './constants';
 import { CreateMessageDto } from './modules/chat/message/dto/create-message.dto';
 import { ConversationService } from './modules/chat/conversation/conversation.service';
-import { Logger } from '@nestjs/common';
+import { Logger, ForbiddenException } from '@nestjs/common';
 
 const users: Record<string, string> = {};
 
@@ -147,14 +147,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         const rooms = conversations.map((item) => {
           return this.getRoomNameForConversation(item.conversationId);
         });
-
+        const candidate = await this.usersService.findOne(userId);
+        if (!candidate) {
+          throw new ForbiddenException('No user found');
+        }
         this.usersService.setOnlineStatus(userId, 'online');
 
         client.join(rooms);
         // передаем информацию всем клиентам, кроме текущего
         client.broadcast.emit('user:connected', userId);
       } catch (err) {
-        this.logger.error('Socker IO:', err.message);
+        this.logger.error('Socket IO:', err.message);
         client.disconnect();
       }
     } else {
@@ -171,7 +174,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         this.usersService.updateLastActivity(userId);
       }
     } catch (error) {
-      this.logger.error('Socker IO:', error.message);
+      this.logger.error('Socket IO:', error.message);
     }
 
     delete users[socketId];
