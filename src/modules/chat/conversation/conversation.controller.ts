@@ -45,8 +45,6 @@ export class ConversationController {
   })
   @Get()
   async getForCurrentUser(@Req() request: Request) {
-    console.log(request.user);
-
     return await this.conversationService.findWhereUser(request.user.id);
   }
 

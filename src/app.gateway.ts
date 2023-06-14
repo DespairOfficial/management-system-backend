@@ -17,6 +17,7 @@ import { MessageService } from './modules/chat/message/message.service';
 import { UNAUTHORIZED } from './constants';
 import { CreateMessageDto } from './modules/chat/message/dto/create-message.dto';
 import { ConversationService } from './modules/chat/conversation/conversation.service';
+import { Logger } from '@nestjs/common';
 
 const users: Record<string, string> = {};
 
@@ -35,7 +36,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     private readonly conversationService: ConversationService,
     private readonly usersService: UsersService,
   ) {}
-
+  private logger = new Logger();
   private getRoomNameForConversation = (conversationId: number) => {
     return `conversation-room-${conversationId}`;
   };
@@ -141,16 +142,21 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const userId = user.id;
       const socketId = client.id;
       users[socketId] = userId;
-      const conversations = await this.conversationService.getUserOnConversation(user.id);
-      const rooms = conversations.map((item) => {
-        return this.getRoomNameForConversation(item.conversationId);
-      });
+      try {
+        const conversations = await this.conversationService.getUserOnConversation(user.id);
+        const rooms = conversations.map((item) => {
+          return this.getRoomNameForConversation(item.conversationId);
+        });
 
-      this.usersService.setOnlineStatus(userId, 'online');
+        this.usersService.setOnlineStatus(userId, 'online');
 
-      client.join(rooms);
-      // передаем информацию всем клиентам, кроме текущего
-      client.broadcast.emit('user:connected', userId);
+        client.join(rooms);
+        // передаем информацию всем клиентам, кроме текущего
+        client.broadcast.emit('user:connected', userId);
+      } catch (err) {
+        this.logger.error('Socker IO:', err.message);
+        client.disconnect();
+      }
     } else {
       client.disconnect();
     }
