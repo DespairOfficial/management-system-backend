@@ -33,22 +33,26 @@ export class UsersService {
     return await this.prismaService.user.findMany();
   }
 
-  async findNotInContacts(userId: User['id']): Promise<User[]> {
-    return await this.prismaService.user.findMany({
+  async findWithContactsInfo(userId: User['id']): Promise<User[]> {
+    const users = await this.prismaService.user.findMany({
       where: {
         id: {
           not: {
             equals: userId,
           },
         },
-        contacts: {
-          every: {
-            NOT: {
-              userId,
-            },
+      },
+      include: {
+        whereInContacts: {
+          where: {
+            userId,
           },
         },
       },
+    });
+    return users.map((user) => {
+      const { whereInContacts, ...rest } = user;
+      return { ...rest, isContact: whereInContacts.length > 0 };
     });
   }
 
@@ -77,12 +81,24 @@ export class UsersService {
   }
 
   async setOnlineStatus(id: User['id'], status: OnlineStatus) {
+    this.updateLastActivity(id);
     return await this.prismaService.user.update({
       where: {
         id,
       },
       data: {
         status,
+      },
+    });
+  }
+
+  async updateLastActivity(id: User['id']) {
+    return await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        lastActivity: new Date(),
       },
     });
   }

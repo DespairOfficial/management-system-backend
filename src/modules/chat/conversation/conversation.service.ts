@@ -15,6 +15,7 @@ export class ConversationService {
   }
 
   async createWithUserId(userId: User['id'], contactId: User['id']) {
+
     const newConversation = await this.prismaService.conversation.create({
       data: {
         projectId: null,

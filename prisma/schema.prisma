@@ -75,7 +75,7 @@ model Project {
   creator           User               @relation(name: "Creator of a project", fields: [userId], references: [id])
   name              String
   description       String
-  image             String
+  image             String?
   budget            Int
   status            String
   startsAt          DateTime
@@ -252,7 +252,7 @@ model AssigneeOnCard {
 
 model KanbanComment {
   id          String             @id @default(dbgenerated("uuid7()")) @db.Uuid
-  image       String
+  image       String?
   name        String
   createdAt   DateTime
   messageType MessageContentType

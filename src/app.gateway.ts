@@ -136,7 +136,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   // обратите внимание на структуру объекта `handshake`
   async handleConnection(client: Socket, ...args: any[]) {
     const user = this.authGuard(client);
-    console.log('USER:', user);
 
     if (user) {
       const userId = user.id;
@@ -161,6 +160,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     const socketId = client.id;
     const userId = users[socketId];
     this.usersService.setOnlineStatus(userId, 'offline');
+    this.usersService.updateLastActivity(userId);
     delete users[socketId];
     client.broadcast.emit('user:disconnected', userId);
   }

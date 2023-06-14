@@ -39,12 +39,12 @@ export class UsersController {
   }
 
 	@UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Get users that not in contacts' })
+  @ApiOperation({ summary: 'Get users with contacts info' })
   @ApiOkResponse({
     type: [UserInfoEntity],
   })
-  @Get('notInContacts')
+  @Get('withContacts')
   async getNotInContacts(@Req() request: Request) {
-    return await this.usersService.findNotInContacts(request.user.id);
+    return await this.usersService.findWithContactsInfo(request.user.id);
   }
 }

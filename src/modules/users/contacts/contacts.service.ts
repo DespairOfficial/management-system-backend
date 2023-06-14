@@ -24,24 +24,28 @@ export class ContactsService {
   }
 
   async add(userId: User['id'], addToContactsDto: AddToContactsDto) {
+    const reverseContacts = [];
+
     const contactObjects = addToContactsDto.ids.map((item) => {
-      this.conversationService.createWithUserId(userId, item);
+      reverseContacts.push({
+        userId: item,
+        contactId: userId,
+      });
       return {
         userId,
         contactId: item,
       };
     });
+    contactObjects.push(...reverseContacts);
 
-    addToContactsDto.ids.forEach((item) => {
-      this.conversationService.createWithUserId(userId, item);
-      contactObjects.push({
-        userId: item,
-        contactId: userId,
-      });
-    });
     const contactsCount = await this.contactsRepository.createMany({
       data: contactObjects,
     });
+
+    addToContactsDto.ids.forEach((item) => {
+      this.conversationService.createWithUserId(userId, item);
+    });
+
     return contactsCount;
   }
 }
