@@ -160,16 +160,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     }
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     const socketId = client.id;
     const userId = users[socketId];
-    try {
-      if (userId) {
-        this.usersService.setOnlineStatus(userId, 'offline');
-        this.usersService.updateLastActivity(userId);
-      }
-    } catch (error) {
-      this.logger.error('Socket IO:', error.message);
+    const candidate = await this.usersService.findOne(userId);
+    if (candidate) {
+      this.usersService.setOnlineStatus(userId, 'offline');
+      this.usersService.updateLastActivity(userId);
     }
 
     delete users[socketId];
