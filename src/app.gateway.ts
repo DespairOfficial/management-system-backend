@@ -165,8 +165,15 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   handleDisconnect(client: Socket) {
     const socketId = client.id;
     const userId = users[socketId];
-    this.usersService.setOnlineStatus(userId, 'offline');
-    this.usersService.updateLastActivity(userId);
+    try {
+      if (userId) {
+        this.usersService.setOnlineStatus(userId, 'offline');
+        this.usersService.updateLastActivity(userId);
+      }
+    } catch (error) {
+      this.logger.error('Socker IO:', error.message);
+    }
+
     delete users[socketId];
     client.broadcast.emit('user:disconnected', userId);
   }
