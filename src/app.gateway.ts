@@ -148,6 +148,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
           return this.getRoomNameForConversation(item.conversationId);
         });
         const candidate = await this.usersService.findOne(userId);
+        console.log(candidate);
+
         if (!candidate) {
           throw new ForbiddenException('No user found');
         }
