@@ -7,7 +7,7 @@ export class CreateRequestToJoinProjectDto implements Partial<RequestToProject> 
     example: 1,
     description: 'Id of a user to join',
   })
-  @IsNumber()
+  @IsString()
   userId: User['id'];
 
   @ApiProperty({

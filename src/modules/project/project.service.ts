@@ -38,14 +38,36 @@ export class ProjectService {
     });
   }
 
+  async findUsersToInvite(projectId: Project['id'], userId: User['id']) {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        requestsToProjects: {
+          every: {
+            NOT: {
+              projectId,
+            },
+          },
+        },
+        projects: {
+          every: {
+            NOT: {
+              projectId,
+            },
+          },
+        },
+      },
+    });
+    return users.filter((user) => user.id !== userId);
+  }
+
   async findAllInvitationsToMe(userId: User['id']) {
     return await this.prismaService.requestToProject.findMany({
       where: {
         userId,
       },
-			include:{
-				project: true
-			}
+      include: {
+        project: true,
+      },
     });
   }
 

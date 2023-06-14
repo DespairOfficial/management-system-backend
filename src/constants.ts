@@ -22,4 +22,4 @@ export const BAD_TARGET = 'Target does not exist';
 export const BAD_REQUEST = 'Bad or corrupted request';
 export const BAD_AUTH = 'You cannot be authorized';
 
-export const REQUEST_WAS_SEND = 'Request was already send';
+export const REQUEST_WAS_SEND = 'Invitation was already send';

@@ -1,3 +1,5 @@
+import { Project } from '@prisma/client';
+import { UserEntity } from './../users/entities/user.entity';
 import { CreateRequestToJoinProjectDto } from './dto/create-request-to-join-project.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectEntity } from './entities/project.entity';
@@ -94,6 +96,24 @@ export class ProjectController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get users to invite' })
+  @ApiOkResponse({
+    type: [UserEntity],
+  })
+  @Get('notInvitedUsers/:projectId')
+  async getNotInvitedUsers(@Param('projectId') projectId: Project['id'], @Req() request: Request) {
+    try {
+			const project = await this.projectService.findOne(projectId)
+			if(project.userId !== request.user.id){
+				throw new ForbiddenException('You have no rights to do that!');
+			}
+      return await this.projectService.findUsersToInvite(projectId, request.user.id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all my projects' })
   @ApiOkResponse({
     type: [ProjectEntity],
@@ -121,15 +141,15 @@ export class ProjectController {
     }
   }
 
-  @ApiOperation({ summary: 'Request to join project' })
+  @ApiOperation({ summary: 'Invitation to join project' })
   @ApiOkResponse({
     schema: {
-      example: { message: 'Request was send!' },
+      example: { message: 'Invitation was send!' },
     },
   })
   @UseGuards(JwtAuthGuard)
-  @Post('requestToJoin')
-  async requestToJoinTeam(
+  @Post('invitation')
+  async invitationToJoinTeam(
     @Req() request: Request,
     @Body() createRequestToJoinProjectDto: CreateRequestToJoinProjectDto,
   ) {
