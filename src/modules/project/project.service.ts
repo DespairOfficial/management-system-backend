@@ -1,3 +1,4 @@
+import { BoardService } from './../kanban/board/board.service';
 import { ConversationService } from './../chat/conversation/conversation.service';
 import { existsSync } from 'fs';
 import { FileService } from './../file/file.service';
@@ -14,6 +15,7 @@ export class ProjectService {
     private readonly prismaService: PrismaService,
     private readonly fileService: FileService,
     private readonly conversationService: ConversationService,
+    private readonly boardService: BoardService,
   ) {}
   async create(userId: User['id'], createProjectDto: CreateProjectDto, image: Express.Multer.File) {
     const filename = await this.fileService.updateMulterFile(image, 'projects');
@@ -22,7 +24,7 @@ export class ProjectService {
     });
 
     await this.conversationService.createWithProjectId(userId, project.id);
-
+    await this.boardService.create(project.id);
     return project;
   }
 
@@ -34,6 +36,21 @@ export class ProjectService {
     return await this.prismaService.project.findMany({
       where: {
         userId,
+      },
+    });
+  }
+
+  async findWhereParticipant(userId: User['id']) {
+    return await this.prismaService.project.findMany({
+      where: {
+        participants: {
+          some: {
+            userId,
+          },
+        },
+      },
+      include: {
+        kanbanBoard: true,
       },
     });
   }

@@ -34,7 +34,7 @@ export class ContactsController {
   })
   @Post()
   async addToContacts(@Req() request: Request, @Body() addToContactsDto: AddToContactsDto) {
-    try {
+    try { 
       return await this.contactsService.add(request.user.id, addToContactsDto);
     } catch (error) {
       throw new BadRequestException(BAD_TARGET);

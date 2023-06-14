@@ -1,3 +1,6 @@
+import { ColumnsModule } from './modules/kanban/columns/columns.module';
+import { CardModule } from './modules/kanban/card/card.module';
+import { BoardModule } from './modules/kanban/board/board.module';
 import { UsersModule } from 'src/modules/users/users.module';
 import { ProjectModule } from './modules/project/project.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -12,7 +15,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SharedModule } from './modules/shared/shared.module';
 import { CalendarEventsModule } from './modules/calendar-events/calendar-events.module';
-import { KanbanModule } from './modules/kanban/kanban.module';
 
 @Module({
   imports: [
@@ -28,8 +30,10 @@ import { KanbanModule } from './modules/kanban/kanban.module';
       serveRoot: '/static/uploads/',
     }),
     CalendarEventsModule,
-    KanbanModule,
     UsersModule,
+    BoardModule,
+    CardModule,
+    ColumnsModule,
   ],
   controllers: [],
   providers: [AppGateway],

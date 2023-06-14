@@ -7,5 +7,6 @@ import { BoardController } from './board.controller';
   controllers: [BoardController],
   providers: [BoardService],
   imports: [DatabaseModule],
+  exports: [BoardService],
 })
 export class BoardModule {}

@@ -2,23 +2,12 @@ import { BoardEntity } from './entities/board.entity';
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BoardService } from './board.service';
-import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 
 @Controller('kanban/board')
 @ApiTags('KanbanBoard')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
-
-  @Post()
-  create(@Body() createBoardDto: CreateBoardDto) {
-    return this.boardService.create(createBoardDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.boardService.findAll();
-  }
 
   @ApiOperation({ summary: 'Get kanban board' })
   @ApiOkResponse({

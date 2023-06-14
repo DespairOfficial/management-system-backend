@@ -118,10 +118,24 @@ export class ProjectController {
   @ApiOkResponse({
     type: [ProjectEntity],
   })
-  @Get()
-  async getAll(@Req() request: Request) {
+  @Get('my')
+  async getMy(@Req() request: Request) {
     try {
       return await this.projectService.findAllMy(request.user.id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+	@UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get projects where user is participant' })
+  @ApiOkResponse({
+    type: [ProjectEntity],
+  })
+  @Get()
+  async getWhereParticipant(@Req() request: Request) {
+    try {
+      return await this.projectService.findWhereParticipant(request.user.id);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

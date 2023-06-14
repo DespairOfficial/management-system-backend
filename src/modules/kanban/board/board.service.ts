@@ -1,15 +1,18 @@
 import { PrismaService } from './../../database/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-import { KanbanBoard } from '@prisma/client';
+import { KanbanBoard, Project } from '@prisma/client';
 
 @Injectable()
 export class BoardService {
   constructor(private readonly prismaService: PrismaService) {}
   private readonly boardRepository = this.prismaService.kanbanBoard;
-  create(createBoardDto: CreateBoardDto) {
-    return 'This action adds a new board';
+  async create(projectId: Project['id']) {
+    return await this.boardRepository.create({
+      data: {
+        projectId,
+      },
+    });
   }
 
   async findAll() {

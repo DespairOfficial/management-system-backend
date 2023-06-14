@@ -89,7 +89,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     if (user) {
       const createdMessage = await this.messageService.create(user.id, payload);
       const room = this.getRoomNameForConversation(payload.conversationId);
-      this.server.to(room).emit('message:new', { ...createdMessage, conversationId: payload.conversationId });
+      client.broadcast.to(room).emit('message:new', { ...createdMessage, conversationId: payload.conversationId });
       return createdMessage;
     } else {
       return new WsException(UNAUTHORIZED);
