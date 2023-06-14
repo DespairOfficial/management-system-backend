@@ -81,7 +81,6 @@ export class UsersService {
   }
 
   async setOnlineStatus(id: User['id'], status: OnlineStatus) {
-    this.updateLastActivity(id);
     return await this.prismaService.user.update({
       where: {
         id,
