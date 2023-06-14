@@ -142,26 +142,19 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const userId = user.id;
       const socketId = client.id;
       users[socketId] = userId;
-      try {
-        const conversations = await this.conversationService.getUserOnConversation(user.id);
-        const rooms = conversations.map((item) => {
-          return this.getRoomNameForConversation(item.conversationId);
-        });
-        const candidate = await this.usersService.findOne(userId);
-        console.log(candidate);
+      const conversations = await this.conversationService.getUserOnConversation(user.id);
+      const rooms = conversations.map((item) => {
+        return this.getRoomNameForConversation(item.conversationId);
+      });
+      const candidate = await this.usersService.findOne(userId);
 
-        if (!candidate) {
-          throw new ForbiddenException('No user found');
-        }
+      if (candidate) {
         this.usersService.setOnlineStatus(userId, 'online');
-
-        client.join(rooms);
-        // передаем информацию всем клиентам, кроме текущего
-        client.broadcast.emit('user:connected', userId);
-      } catch (err) {
-        this.logger.error('Socket IO:', err.message);
-        client.disconnect();
       }
+
+      client.join(rooms);
+      // передаем информацию всем клиентам, кроме текущего
+      client.broadcast.emit('user:connected', userId);
     } else {
       client.disconnect();
     }
