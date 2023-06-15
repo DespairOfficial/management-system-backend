@@ -33,21 +33,43 @@ export class ProjectService {
   }
 
   async findAllMy(userId: User['id']) {
-    return await this.prismaService.project.findMany({
+    const projects = await this.prismaService.project.findMany({
       where: {
         userId,
       },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    return projects.map((item) => {
+      const { participants, ...rest } = item;
+
+      return {
+        ...rest,
+        participants: participants.map((participant) => participant.user),
+      };
     });
   }
 
   async findWhereParticipant(userId: User['id']) {
     return await this.prismaService.project.findMany({
       where: {
-        participants: {
-          some: {
+        OR: [
+          {
+            participants: {
+              some: {
+                userId,
+              },
+            },
+          },
+          {
             userId,
           },
-        },
+        ],
       },
       include: {
         kanbanBoard: true,
