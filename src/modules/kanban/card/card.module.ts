@@ -1,3 +1,4 @@
+import { FileModule } from './../../file/file.module';
 import { JwtModule } from '@nestjs/jwt';
 import { DatabaseModule } from './../../database/database.module';
 import { Module } from '@nestjs/common';
@@ -8,6 +9,6 @@ import { ColumnsModule } from '../columns/columns.module';
 @Module({
   controllers: [CardController],
   providers: [CardService],
-  imports: [DatabaseModule, JwtModule, ColumnsModule],
+  imports: [DatabaseModule, JwtModule, ColumnsModule, FileModule],
 })
 export class CardModule {}

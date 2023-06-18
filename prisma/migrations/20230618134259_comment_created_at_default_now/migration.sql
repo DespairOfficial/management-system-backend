@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "KanbanComment" ALTER COLUMN "createdAt" SET DEFAULT CURRENT_TIMESTAMP;

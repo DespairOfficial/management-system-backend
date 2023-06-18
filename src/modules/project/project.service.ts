@@ -43,6 +43,7 @@ export class ProjectService {
             user: true,
           },
         },
+        creator: true,
       },
     });
     return projects.map((item) => {
@@ -56,7 +57,7 @@ export class ProjectService {
   }
 
   async findWhereParticipant(userId: User['id']) {
-    return await this.prismaService.project.findMany({
+    const projects = await this.prismaService.project.findMany({
       where: {
         OR: [
           {
@@ -73,7 +74,22 @@ export class ProjectService {
       },
       include: {
         kanbanBoard: true,
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+        creator: true,
       },
+    });
+
+    return projects.map((item) => {
+      const { participants, ...rest } = item;
+
+      return {
+        ...rest,
+        participants: participants.map((participant) => participant.user),
+      };
     });
   }
 
@@ -119,11 +135,11 @@ export class ProjectService {
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto, image: Express.Multer.File) {
-    const projectBeforeUpdate = await this.prismaService.user.findFirstOrThrow({
+    const projectBeforeUpdate = await this.prismaService.project.findFirstOrThrow({
       where: { id },
     });
-
-    const filename = await this.fileService.updateMulterFile(image, 'projects', projectBeforeUpdate.image);
+		const imgOrString = image ?? updateProjectDto.image;
+    const filename = await this.fileService.updateMulterFile(imgOrString, 'projects', projectBeforeUpdate.image);
     return await this.prismaService.project.update({
       data: { ...updateProjectDto, image: filename },
       where: {

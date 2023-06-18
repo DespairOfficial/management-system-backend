@@ -32,7 +32,11 @@ export class BoardService {
         },
         cards: {
           include: {
-            assignees: true,
+            assignees: {
+              include: {
+                assignees: true,
+              },
+            },
             comments: true,
           },
         },
@@ -55,7 +59,9 @@ export class BoardService {
       const { assignees, ...rest } = card;
       return {
         ...rest,
-        assignee: assignees.map((user) => user.assigneeId),
+        assignee: assignees.map((assignee) => {
+          return assignee.assignees;
+        }),
       };
     });
     return { ...rest, columnOrder: newColumnOrder, columns: newColumns, cards: newCards };

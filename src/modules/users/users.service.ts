@@ -68,15 +68,16 @@ export class UsersService {
     const userBeforeUpdate = await this.prismaService.user.findFirstOrThrow({
       where: { id },
     });
-    const { setImageToNull, ...updateDto } = updateUserDto;
 
-    const filename = await this.fileService.updateMulterFile(image, 'users', userBeforeUpdate.image, setImageToNull);
+    const imgOrString = image ?? updateUserDto.image;
+
+    const filename = await this.fileService.updateMulterFile(imgOrString, 'users', userBeforeUpdate.image);
 
     return await this.prismaService.user.update({
       where: {
         id: id,
       },
-      data: { ...updateDto, image: filename },
+      data: { ...updateUserDto, image: filename },
     });
   }
 

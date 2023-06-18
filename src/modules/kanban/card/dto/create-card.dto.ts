@@ -38,6 +38,7 @@ export class CreateCardDto implements Omit<KanbanCard, 'attachments' | 'id' | 'b
   @ApiProperty({
     example: '[img1, img2]',
     description: 'Attachments files array',
+    required: false,
   })
   @IsOptional()
   attachments: string[];
@@ -48,4 +49,12 @@ export class CreateCardDto implements Omit<KanbanCard, 'attachments' | 'id' | 'b
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   completed: boolean;
+
+  @ApiProperty({
+    example: '[img1, img2]',
+    description: 'Attachments files array',
+  })
+  @IsOptional()
+  @IsString()
+  prioritize: string;
 }

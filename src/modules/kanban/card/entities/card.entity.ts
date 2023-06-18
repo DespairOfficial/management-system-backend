@@ -43,4 +43,9 @@ export class CardEntity implements KanbanCard {
     example: '01887b7e-c553-765c-94c2-16bef2666fdf',
   })
   boardId: string;
+
+  @ApiProperty({
+    example: 'low',
+  })
+  prioritize: string;
 }

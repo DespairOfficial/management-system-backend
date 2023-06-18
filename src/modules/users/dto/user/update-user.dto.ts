@@ -57,14 +57,6 @@ export class UpdateUserDto implements Omit<User, 'id' | 'isVerified' | 'lastActi
   birthDate: Date;
 
   @ApiProperty({
-    example: true,
-    description: 'Used when users wants to delete his image',
-  })
-  @IsBoolean()
-  @IsOptional()
-  setImageToNull: boolean;
-
-  @ApiProperty({
     example: 'Canada',
   })
   @IsString()

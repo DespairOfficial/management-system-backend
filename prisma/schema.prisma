@@ -234,6 +234,7 @@ model KanbanCard {
   due         DateTime[]
   attachments String[]
   comments    KanbanComment[]
+  prioritize  String               @default("low")
   completed   Boolean
   boardId     String               @db.Uuid
   board       KanbanBoard          @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -251,14 +252,13 @@ model AssigneeOnCard {
 }
 
 model KanbanComment {
-  id          String             @id @default(dbgenerated("uuid7()")) @db.Uuid
-  image       String?
-  name        String
-  createdAt   DateTime
-  messageType MessageContentType
-  message     String
-  cardId      String             @db.Uuid
-  card        KanbanCard         @relation(fields: [cardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id        String     @id @default(dbgenerated("uuid7()")) @db.Uuid
+  image     String?
+  name      String
+  createdAt DateTime   @default(now())
+  message   String
+  cardId    String     @db.Uuid
+  card      KanbanCard @relation(fields: [cardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model KanbanColumn {

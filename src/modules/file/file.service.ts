@@ -1,34 +1,48 @@
 import { writeFile, rm } from 'fs/promises';
-import { DEVELOPMENT_FILES, ERROR_SAVING_FILE } from './../../config/constants';
-import { v4 as uuidv4 } from 'uuid';
-import { resolve, join } from 'path';
 import { existsSync } from 'fs';
+import { ERROR_SAVING_FILE } from './../../config/constants';
+import { v4 as uuidv4 } from 'uuid';
+import { resolve, join, normalize } from 'path';
 import { UPLOADS_PATH } from '../../config/paths';
-import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UploadsFolder } from '../../@types/folder';
 @Injectable()
 export class FileService {
   public async updateMulterFile(
-    file: Express.Multer.File,
+    fileOrOldPath: Express.Multer.File | null | string | undefined,
     folder: UploadsFolder,
-    oldFilePathName: string | null = null,
-    isSettingNull = false,
+    oldFilePathName: string = undefined,
   ) {
-    let resultPathName: string | null;
-    if (file && process.env.NODE_ENV === 'development') {
-      // throw new ForbiddenException(DEVELOPMENT_FILES);
+    let resultPathName = oldFilePathName;
+
+    if (fileOrOldPath && typeof fileOrOldPath !== 'string') {
+      if (oldFilePathName) {
+        const oldDest = resolve(UPLOADS_PATH, oldFilePathName);
+        await this.delete(oldDest);
+      }
+      resultPathName = join(folder, uuidv4() + '-' + fileOrOldPath.originalname);
+      const destName = resolve(UPLOADS_PATH, resultPathName);
+      try {
+        await this.save(destName, fileOrOldPath.buffer);
+        return resultPathName;
+      } catch (error) {
+        throw new InternalServerErrorException(ERROR_SAVING_FILE);
+      }
     }
-    if (isSettingNull) {
+
+    if (!(typeof fileOrOldPath === 'string' && normalize(fileOrOldPath) === oldFilePathName)) {
       if (oldFilePathName) {
         const oldDest = resolve(UPLOADS_PATH, oldFilePathName);
         await this.delete(oldDest);
       }
       resultPathName = null;
-    } else if (file) {
-      if (oldFilePathName) {
-        const oldImgDest = resolve(UPLOADS_PATH, oldFilePathName);
-        await this.delete(oldImgDest);
-      }
+    }
+    return resultPathName;
+  }
+
+  public async addMulterFile(file: Express.Multer.File | null, folder: UploadsFolder) {
+    let resultPathName = undefined;
+    if (file) {
       resultPathName = join(folder, uuidv4() + '-' + file.originalname);
       const destName = resolve(UPLOADS_PATH, resultPathName);
       try {
@@ -49,11 +63,11 @@ export class FileService {
     buffer: Buffer,
     name: string,
     folder: UploadsFolder,
-    oldFilePathName: string | null = null,
+    oldFilePathName: string = undefined,
     setFileToNull = false,
   ) {
-    let resultPathName: string | null;
-    if (buffer && process.env.NODE_ENV === 'development') {
+    let resultPathName = oldFilePathName;
+    if (buffer && process.env.NODE_ENV == 'development') {
       // throw new ForbiddenException(DEVELOPMENT_FILES);
     }
     if (setFileToNull) {
@@ -78,14 +92,50 @@ export class FileService {
     return resultPathName;
   }
 
-  async save(filePath: string, file: Buffer) {
+  async updateMultipleMulterFiles(
+    currentPaths: string[],
+    filePathsInput: string | string[],
+    folder: UploadsFolder,
+    newFiles?: Express.Multer.File[],
+  ) {
+    let filenames: string[] = filePathsInput
+      ? typeof filePathsInput === 'string'
+        ? [filePathsInput]
+        : [...filePathsInput]
+      : [];
+
+    const newFileNames = await Promise.all(
+      newFiles
+        ? newFiles.map(async (image) => {
+            const filename = await this.addMulterFile(image, folder);
+            return filename;
+          })
+        : [],
+    );
+
+    const filenamesToRemain = [];
+
+    filenames = filenames.map((filename) => {
+      return normalize(filename);
+    });
+
+    currentPaths.forEach((oldImage) => {
+      filenames.includes(oldImage) ? filenamesToRemain.push(oldImage) : this.deleteFile(oldImage);
+    });
+
+    filenames = [...filenamesToRemain, ...newFileNames];
+
+    return filenames;
+  }
+
+  private async save(filePath: string, file: Buffer) {
     try {
       await writeFile(filePath, file);
     } catch (error) {
       throw error;
     }
   }
-  async delete(pathToFile: string) {
+  private async delete(pathToFile: string) {
     try {
       if (existsSync(pathToFile)) {
         await rm(pathToFile);
