@@ -13,9 +13,9 @@ export class CommentEntity implements KanbanComment {
   image: string;
 
   @ApiProperty({
-    example: 'New comment',
+    example: '01887b7e-c553-765c-94c2-16bef2666fdf',
   })
-  name: string;
+  userId: string;
 
   @ApiProperty({
     example: '2023-03-22T08:50:01.930Z',

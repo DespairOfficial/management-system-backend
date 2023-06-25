@@ -5,12 +5,22 @@ import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestj
 import { ColumnsService } from './columns.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
+import { SetCardsPositionDto } from './dto/set-cards-position.dto';
 
 @Controller('kanban/columns')
 @UseGuards(JwtAuthGuard)
 @ApiTags('KanbanColumns')
 export class ColumnsController {
   constructor(private readonly columnsService: ColumnsService) {}
+
+  @ApiOperation({ summary: 'Set new cards on columns  order' })
+  @ApiOkResponse({
+    type: ColumnEntity,
+  })
+  @Patch('cardsPosition')
+  setCardsPosition(@Body() setCardsPositionDto: SetCardsPositionDto) {
+    return this.columnsService.setCardsPosition(setCardsPositionDto);
+  }
 
   @ApiOperation({ summary: 'Create kanban column' })
   @ApiCreatedResponse({

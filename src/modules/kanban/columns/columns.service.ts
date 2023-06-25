@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { CreateColumnDto } from './dto/create-column.dto';
+import { SetCardsPositionDto } from './dto/set-cards-position.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
 
 @Injectable()
@@ -62,6 +63,38 @@ export class ColumnsService {
       where: {
         id,
       },
+    });
+  }
+  async setCardsPosition(setCardsPositionDto: SetCardsPositionDto) {
+    const createAccordance = [];
+    setCardsPositionDto.startColumn.cardIds.forEach((cardId) => {
+      createAccordance.push({
+        cardId,
+        columnId: setCardsPositionDto.startColumn.id,
+      });
+    });
+
+    setCardsPositionDto.finishColumn?.cardIds.forEach((cardId) => {
+      createAccordance.push({
+        cardId,
+        columnId: setCardsPositionDto.finishColumn.id,
+      });
+    });
+
+    await this.prismaService.kanbanCardOnColumn.deleteMany({
+      where: {
+        OR: [
+          {
+            columnId: setCardsPositionDto.startColumn.id,
+          },
+          {
+            columnId: setCardsPositionDto.finishColumn?.id,
+          },
+        ],
+      },
+    });
+    await this.prismaService.kanbanCardOnColumn.createMany({
+      data: createAccordance,
     });
   }
 }

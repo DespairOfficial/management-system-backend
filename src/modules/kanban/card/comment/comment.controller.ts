@@ -26,6 +26,6 @@ export class CommentController {
     @Req() request: Request,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    return this.commentService.create(createCommentDto, image);
+    return this.commentService.create(request.user.id, createCommentDto, image);
   }
 }

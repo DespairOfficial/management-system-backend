@@ -1,1 +1,8 @@
-export type UploadsFolder = 'attachments' | 'users' | 'shared' | 'projects' | 'kanban' | 'kanban/attachments';
+export type UploadsFolder =
+  | 'attachments'
+  | 'users'
+  | 'shared'
+  | 'projects'
+  | 'kanban'
+  | 'kanban/attachments'
+  | 'kanban/comments';

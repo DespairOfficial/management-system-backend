@@ -2,18 +2,12 @@ import { IsOptional, IsString } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { KanbanComment } from '@prisma/client';
 
-export class CreateCommentDto implements Omit<KanbanComment, 'id' | 'createdAt'> {
+export class CreateCommentDto implements Omit<KanbanComment, 'id' | 'createdAt' | 'userId'> {
   @ApiProperty({
     example: '[img1, img2]',
   })
   @IsOptional()
   image: string;
-
-  @ApiProperty({
-    example: 'New comment',
-  })
-  @IsString()
-  name: string;
 
   @ApiProperty({
     example: 'New comment',

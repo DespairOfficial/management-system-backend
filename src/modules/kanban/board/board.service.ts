@@ -2,6 +2,7 @@ import { PrismaService } from './../../database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { KanbanBoard, Project } from '@prisma/client';
+import { NewColumnOrderDto } from './dto/new-columns-order.dto';
 
 @Injectable()
 export class BoardService {
@@ -37,16 +38,17 @@ export class BoardService {
                 assignees: true,
               },
             },
-            comments: true,
+            comments: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
       },
     });
 
     const { columnOrder, columns, ...rest } = board;
-    const newColumnOrder = board.columns.map((column) => {
-      return column.id;
-    });
     const newColumns = columns.map((col) => {
       const cardIds = col.cards.map((card) => card.cardId);
       const { cards, ...rest } = col;
@@ -64,11 +66,18 @@ export class BoardService {
         }),
       };
     });
-    return { ...rest, columnOrder: newColumnOrder, columns: newColumns, cards: newCards };
+    return { ...rest, columnOrder, columns: newColumns, cards: newCards };
   }
 
-  update(id: string, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
+  async setNewOrder(id: string, newColumnOrderDto: NewColumnOrderDto) {
+    return await this.boardRepository.update({
+      where: {
+        id,
+      },
+      data: {
+        columnOrder: newColumnOrderDto.newColumnOrder,
+      },
+    });
   }
 
   remove(id: string) {
